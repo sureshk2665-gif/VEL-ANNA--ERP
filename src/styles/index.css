@@ -1,0 +1,17 @@
+/* VIPL ERP stylesheet — split from the original single-file VIPL-ERP.html.
+   Import order matters: it preserves the original cascade order. */
+@import './01-theme.css';
+@import './02-base.css';
+@import './03-login.css';
+@import './04-layout-header.css';
+@import './05-reports-planning.css';
+@import './06-dashboard-cards.css';
+@import './07-dropdowns.css';
+@import './08-tabs-launcher.css';
+@import './09-ui-polish.css';
+@import './10-mapping-gauge-rights.css';
+@import './11-cell-colors.css';
+@import './12-quotation-forms.css';
+@import './13-responsive.css';
+@import './14-control-plan.css';
+@import './15-modals-misc.css';

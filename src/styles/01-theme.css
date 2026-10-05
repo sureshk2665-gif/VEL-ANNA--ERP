@@ -1,0 +1,53 @@
+:root{
+  --bg:#12151a;
+  --panel:#1a1e25;
+  --panel2:#20252d;
+  --line:#2c333d;
+  --steel:#8fb4d4;
+  --steel-dim:#5a7996;
+  --amber:#e8ab4c;
+  --amber-dim:#9a7638;
+  --green:#63b57e;
+  --red:#d16f61;
+  --text:#e6ebf1;
+  --text-dim:#8b96a5;
+  --mono: 'JetBrains Mono','Consolas','SF Mono','Roboto Mono',monospace;
+  --sans: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  --r-sm:9px; --r-md:13px; --r-lg:18px; --r-pill:999px;
+  --sh-sm:0 1px 2px rgba(0,0,0,0.18);
+  --sh-md:0 4px 16px rgba(0,0,0,0.22);
+  --sh-lg:0 12px 36px rgba(0,0,0,0.30);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
+  --focus-ring:0 0 0 3px color-mix(in srgb, var(--steel) 35%, transparent);
+  --rail-w:224px;
+}
+body[data-theme="light"]{
+  --bg:#f2f4f7; --panel:#ffffff; --panel2:#f6f8fa; --line:#dde3ea;
+  --steel:#2f6690; --steel-dim:#4c7ea3; --amber:#a56a10; --amber-dim:#c2925a;
+  --green:#278449; --red:#b03a2c; --text:#1a2230; --text-dim:#5c6b7c;
+  --focus-ring:0 0 0 3px color-mix(in srgb, var(--steel) 25%, transparent);
+  --sh-sm:0 1px 2px rgba(20,30,45,0.06); --sh-md:0 6px 20px rgba(20,30,45,0.08); --sh-lg:0 16px 40px rgba(20,30,45,0.12);
+}
+body[data-theme="corporate"]{
+  --bg:#f0f3f7; --panel:#ffffff; --panel2:#eef1f6; --line:#dae0e9;
+  --steel:#1f3a5f; --steel-dim:#3d5a7f; --amber:#96690f; --amber-dim:#bb9457;
+  --green:#1c7145; --red:#9c2f2f; --text:#182234; --text-dim:#576578;
+  --focus-ring:0 0 0 3px color-mix(in srgb, var(--steel) 22%, transparent);
+  --sh-sm:0 1px 2px rgba(20,30,45,0.06); --sh-md:0 6px 20px rgba(20,30,45,0.08); --sh-lg:0 16px 40px rgba(20,30,45,0.12);
+}
+/* Slate — cool neutral light theme, same family as Corporate but a softer blue-grey accent */
+body[data-theme="slate"]{
+  --bg:#eef1f5; --panel:#ffffff; --panel2:#f3f6fa; --line:#dde3ea;
+  --steel:#33517a; --steel-dim:#516d94; --amber:#a1700f; --amber-dim:#c69a4f;
+  --green:#1f7a4d; --red:#a83a3a; --text:#1b2430; --text-dim:#5f6b7c;
+  --focus-ring:0 0 0 3px color-mix(in srgb, var(--steel) 22%, transparent);
+  --sh-sm:0 1px 2px rgba(20,30,45,0.06); --sh-md:0 6px 20px rgba(20,30,45,0.08); --sh-lg:0 16px 40px rgba(20,30,45,0.12);
+}
+/* Forest — light professional theme with a green accent, same family as Corporate/Slate */
+body[data-theme="forest"]{
+  --bg:#f0f5f1; --panel:#ffffff; --panel2:#eef4ef; --line:#dae5dc;
+  --steel:#1e6b45; --steel-dim:#3f8763; --amber:#a1700f; --amber-dim:#c69a4f;
+  --green:#207a4a; --red:#a83a3a; --text:#182420; --text-dim:#5c6e63;
+  --focus-ring:0 0 0 3px color-mix(in srgb, var(--steel) 22%, transparent);
+  --sh-sm:0 1px 2px rgba(20,35,28,0.06); --sh-md:0 6px 20px rgba(20,35,28,0.08); --sh-lg:0 16px 40px rgba(20,35,28,0.12);
+}

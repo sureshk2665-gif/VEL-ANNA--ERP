@@ -1,0 +1,56 @@
+/* ================= RESPONSIVE ================= */
+@media (max-width:1180px){
+  .main{ padding:4px 20px 36px; }
+  .th-sub{ display:none; }
+}
+@media (max-width:1100px){
+  .mod-quotation .frow.g4, .mod-purchase .frow.g4,
+  .mod-quotation .frow.g5{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width:900px){
+  .split{grid-template-columns:1fr;}
+  .topHeader{
+    flex-wrap:wrap; row-gap:8px; position:sticky; top:0; z-index:40;
+  }
+  .th-seg-left{ order:1; }
+  .th-seg-right{ order:2; width:100%; margin-left:0; flex-wrap:wrap; row-gap:8px; }
+  .dash-nav-center{ position:static; transform:none; order:0; width:100%; justify-content:center; }
+  .th-theme{ border-left:none; padding-left:0; }
+  .th-seg-left .userTag{ display:none; }
+  .main{ padding:4px 18px 40px; }
+  .frow.g3, .frow.g4, .frow.g5, .frow.g6{ grid-template-columns:1fr 1fr; }
+  .info-grid{ grid-template-columns:repeat(2,1fr); }
+  .info-cell:nth-child(4n){ border-right:1px solid var(--line); }
+  .info-cell:nth-child(2n){ border-right:none; }
+}
+@media (max-width:640px){
+  .mod-quotation .frow.g2, .mod-quotation .frow.g3, .mod-quotation .frow.g4, .mod-quotation .frow.g5,
+  .mod-purchase .frow.g2, .mod-purchase .frow.g3, .mod-purchase .frow.g4{ grid-template-columns:1fr; }
+  .main{ padding:8px 14px 36px; }
+  .topbar{ display:flex; flex-wrap:wrap; }
+  .topbar > div:first-child{ order:3; flex-basis:100%; }
+  .topbar-left-actions{ order:1; }
+  .reports-toggle-btn{ order:2; margin-left:auto; }
+  .page-topline{ flex-wrap:wrap; justify-content:space-between; }
+  .topbar h2{ font-size:19px; }
+  .panel{ padding:16px; }
+  .frow.g2, .frow.g3, .frow.g4, .frow.g5, .frow.g6{ grid-template-columns:1fr; }
+  .cards{ grid-template-columns:repeat(2,1fr); gap:10px; }
+  .card{ padding:13px 12px; }
+  .card .v{ font-size:21px; }
+  .info-grid{ grid-template-columns:1fr 1fr; }
+  button.btn{ padding:11px 18px; min-height:44px; }
+  button.btn.small{ min-height:38px; padding:8px 14px; }
+  input, select, textarea{ min-height:44px; font-size:16px; }
+  textarea{ min-height:70px; }
+  .theme-grid{ flex-wrap:wrap; }
+  table.report-table th, table.report-table td{ padding:8px 9px; font-size:11.5px; }
+  .grid-box{ grid-template-columns:1fr; }
+  .inv-grid{ grid-template-columns:1fr; }
+  .userGrid{ grid-template-columns:1fr; }
+  .rowactions{ justify-content:flex-start; }
+}
+@media print{
+  .topHeader, .toast{ display:none !important; }
+  .app{ display:block; }
+}

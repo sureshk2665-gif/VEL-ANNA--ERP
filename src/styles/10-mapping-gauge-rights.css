@@ -1,0 +1,112 @@
+/* ===== Bar Mapping / Forging Mapping — Product Development screen (scoped, doesn't affect
+   other modules). Structural layout only (grid/spacing/box grouping); typography (font
+   family, font size, weight, letter-spacing, case) intentionally left to the ERP-wide
+   defaults below so this screen matches every other module. ===== */
+.bom-mapping-screen{ text-align:left; }
+.bom-mapping-screen .panel h3{ justify-content:space-between; text-align:left; flex-wrap:wrap; gap:10px 14px; }
+.bom-mapping-screen .bom-form-grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; align-items:start; }
+@media (min-width:1100px){ .bom-mapping-screen .bom-form-grid{ grid-template-columns:1fr 1fr; } }
+.bom-mapping-screen .brc-box{ border-radius:var(--r-md); padding:12px 14px; border:1px solid var(--line); border-left-width:4px; background:var(--panel2); box-shadow:var(--sh-sm); }
+.bom-mapping-screen .brc-box-title{ margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed var(--line); opacity:1; }
+.bom-mapping-screen .brc-box .frow{ gap:10px 14px; text-align:left; align-items:end; margin-bottom:8px; }
+.bom-mapping-screen .brc-box .frow:last-child{ margin-bottom:0; }
+.bom-mapping-screen .brc-box .frow.g4{ grid-template-columns:1fr 1fr; }
+.bom-mapping-screen .brc-box label.fl{ text-align:left; }
+.bom-mapping-screen .brc-box input, .bom-mapping-screen .brc-box select{ width:100%; }
+.bom-mapping-screen .rowactions{ margin-top:4px; padding-top:14px; border-top:1px solid var(--line); }
+/* Result list — grouped finished-part cards */
+.bom-mapping-screen .bom-fp-card{ padding:15px 17px; margin-bottom:15px; border-radius:var(--r-lg); box-shadow:var(--sh-sm); transition:box-shadow .15s ease; text-align:left; }
+.bom-mapping-screen .bom-fp-card:hover{ box-shadow:var(--sh-md); }
+.bom-mapping-screen .bfc-title{ padding-bottom:10px; margin-bottom:4px; border-bottom:1px solid var(--line); }
+.bom-mapping-screen .bom-row-card{ border-radius:var(--r-md); padding:14px 16px; margin-top:12px; }
+.bom-mapping-screen .brc-grid{ grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px; }
+.bom-mapping-screen .brc-grid .brc-box{ padding:12px 14px; box-shadow:none; }
+.bom-mapping-screen .brc-grid .brc-box-title{ margin-bottom:8px; padding-bottom:6px; }
+.bom-mapping-screen .brc-actions{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); }
+.rec-card{position:relative; background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-lg); padding:15px 16px 13px; text-align:center; display:flex; flex-direction:column; gap:6px; box-shadow:var(--sh-sm); transition:box-shadow .16s ease, transform .16s ease, border-color .16s ease; overflow:hidden;}
+.rec-card::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--steel), var(--steel-dim)); opacity:0.9;}
+.rec-card:hover{box-shadow:var(--sh-md); transform:translateY(-2px); border-color:var(--steel-dim);}
+.rec-card .rc-title{font-size:14px; font-weight:700; color:var(--text); line-height:1.3; padding-top:2px; text-align:center; order:-1; width:100%;}
+.rec-card .rc-sub{display:inline-block; align-self:center; font-size:10px; color:var(--steel); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.4px; background:color-mix(in srgb, var(--steel) 14%, transparent); border:1px solid color-mix(in srgb, var(--steel) 30%, transparent); border-radius:var(--r-pill); padding:2px 9px; margin:0 auto 3px;}
+.rec-card .rc-row{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; font-size:11.5px; padding:4px 0; border-bottom:1px dashed var(--line);}
+.rec-card .rc-row:last-child{border-bottom:none;}
+.rec-card .rc-row .k{flex:0 0 auto; min-width:64px; color:var(--text-dim); font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.4px; text-align:left; padding-top:1px;}
+.rec-card .rc-row .v{flex:1 1 auto; color:var(--text); font-weight:600; text-align:right; word-break:break-word;}
+.rec-card .rc-actions{display:flex; gap:8px; justify-content:center; margin-top:8px; padding-top:9px; border-top:1px solid var(--line); flex-wrap:wrap;}
+.rec-card .rc-parts{display:flex; flex-direction:column; gap:8px; margin-top:4px; padding-top:6px; border-top:1px dashed var(--line);}
+.rec-card .rc-part-row{background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 10px; text-align:left;}
+.rec-card .rc-part-no{font-family:var(--mono); font-weight:700; font-size:12.5px; color:var(--text); margin-bottom:5px; word-break:break-word;}
+.rec-card .rc-part-prices{display:flex; justify-content:space-between; gap:8px;}
+.rec-card .rc-part-price{display:flex; flex-direction:column; gap:2px;}
+.rec-card .rc-part-price .k{color:var(--text-dim); font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.3px;}
+.rec-card .rc-part-price .v{color:var(--text); font-weight:700; font-size:12px;}
+.rec-card .rc-part-price:last-child{align-items:flex-end;}
+.rec-card .rc-part-price:last-child .k, .rec-card .rc-part-price:last-child .v{text-align:right;}
+.link-badge{display:inline-flex; align-items:center; gap:5px; background:var(--panel); border:1px solid var(--steel-dim); color:var(--steel); font-family:var(--mono); font-size:10.5px; padding:4px 10px; border-radius:var(--r-pill); margin-bottom:6px;}
+.searchbar{display:flex; align-items:center; gap:9px; background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-md); padding:10px 15px; margin-bottom:18px;}
+.searchbar input{flex:1; background:transparent; border:none; color:var(--text); font-size:13px; outline:none; text-align:left; padding:0;}
+.searchbar input::placeholder{color:var(--text-dim);}
+.mini-card{background:var(--bg); border:1px dashed var(--steel-dim); border-radius:var(--r-md); padding:11px 15px; margin-top:11px; font-size:11.5px;}
+.mini-card .mc-row{display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--line);}
+.mini-card .mc-row:last-child{border-bottom:none;}
+.mini-card .mc-k{color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; font-size:10px; letter-spacing:.3px;}
+.mini-card .mc-v{color:var(--text); font-weight:600;}
+.stock-card{position:relative; border-left:3px solid var(--steel-dim);}
+.stock-card.nil{border-left-color:var(--red);}
+.stock-card.ok{border-left-color:var(--green);}
+.stock-balances{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
+.stock-balances .sb-item{display:flex; flex-direction:column; gap:2px;}
+.stock-balances .sb-k{font-size:9.5px; color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.4px;}
+.stock-balances .sb-v{font-size:13px; font-weight:700;}
+.rec-card .rc-pill{align-self:center; margin-top:2px;}
+.cust-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle; flex:0 0 auto;}
+.cust-chip{display:inline-flex; align-items:center; gap:5px; font-weight:700; color:var(--text);}
+
+/* ---- Gauge / Calibration module: compact cards + sectioned calibration form ---- */
+.gauge-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; align-items:start;}
+.gauge-card{background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-md); padding:16px; text-align:left; display:flex; flex-direction:column; gap:10px; transition:box-shadow .15s, transform .15s;}
+.gauge-card:hover{box-shadow:var(--sh-sm); transform:translateY(-1px);}
+.gauge-card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;}
+.gauge-card-head .gc-name{font-size:14.5px; font-weight:700; color:var(--text); line-height:1.3;}
+.gauge-card-head .gc-id{font-size:11px; color:var(--text-dim); font-family:var(--mono); margin-top:2px;}
+.gauge-card-head .gc-pills{display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex:0 0 auto;}
+.gauge-meta{font-size:11.5px; color:var(--text-dim); display:flex; flex-wrap:wrap; gap:5px 12px;}
+.gauge-meta span{white-space:nowrap;}
+.gauge-stats{display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm); padding:10px 12px;}
+.gauge-stats .gs-item{display:flex; flex-direction:column; gap:2px; min-width:0;}
+.gauge-stats .gs-k{font-size:9.5px; color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; letter-spacing:.4px;}
+.gauge-stats .gs-v{font-size:12.5px; color:var(--text); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.gauge-card-actions{display:flex; gap:6px; flex-wrap:wrap; margin-top:2px;}
+.gauge-card-actions .btn{flex:1 1 auto; padding:7px 10px; font-size:11px; min-width:0;}
+
+.cal-form-card{border:1px solid var(--amber-dim); border-radius:var(--r-md); padding:16px; margin-top:2px; background:color-mix(in srgb, var(--amber) 5%, var(--panel));}
+.cal-form-card h4{margin:0 0 12px; font-size:12.5px; color:var(--amber); text-transform:uppercase; letter-spacing:.4px; display:flex; align-items:center; gap:6px;}
+.cal-form-section{margin-bottom:12px;}
+.cal-form-section:last-of-type{margin-bottom:0;}
+.cal-form-section .cfs-label{font-size:10px; color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;}
+.cal-form-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.cal-form-grid.g2{grid-template-columns:repeat(2,1fr);}
+.cal-form-grid .ff{display:flex; flex-direction:column; gap:4px; min-width:0;}
+.cal-form-grid .ff label{font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.4px; font-family:var(--mono); text-align:left;}
+.cal-form-grid .ff input, .cal-form-grid .ff select{width:100%; box-sizing:border-box;}
+.cal-form-actions{display:flex; gap:8px; margin-top:14px;}
+
+.gauge-history-list{display:flex; flex-direction:column; gap:0;}
+.gauge-history-item{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 2px; border-bottom:1px dashed var(--line);}
+.gauge-history-item:last-child{border-bottom:none;}
+.gauge-history-main{font-size:12px; color:var(--text); display:flex; flex-wrap:wrap; align-items:center; gap:6px; row-gap:4px;}
+.gauge-history-main .gh-dates{font-weight:700; font-family:var(--mono); font-size:11.5px;}
+.gauge-history-main .gh-agency{color:var(--text-dim);}
+.gauge-history-main .gh-remarks{color:var(--text-dim); font-style:italic;}
+
+@media (max-width:640px){
+  .gauge-grid{grid-template-columns:1fr;}
+  .cal-form-grid, .cal-form-grid.g2{grid-template-columns:1fr;}
+  .gauge-stats{grid-template-columns:1fr 1fr;}
+  .gauge-card-actions .btn{flex:1 1 100%;}
+}
+.split{display:grid; grid-template-columns:1.3fr 1fr; gap:22px; align-items:start;}
+
+/* ---- User rights / view-only lock ---- */
+.main.ro-mode input, .main.ro-mode select, .main.ro-mode textarea{ opacity:0.75; }
+input:disabled, select:disabled, textarea:disabled{ background:var(--panel2); opacity:0.6; cursor:not-allowed; }

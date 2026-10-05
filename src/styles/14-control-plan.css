@@ -1,0 +1,208 @@
+/* ===== AIAG / IATF 16949 style Control Plan table — redesigned ===== */
+.cp-legend{display:flex; gap:16px; flex-wrap:wrap; margin:2px 2px 12px; font-size:11px; color:var(--text-dim); font-family:var(--mono);}
+.cp-legend span{display:inline-flex; align-items:center; gap:6px;}
+.cp-legend i{width:11px; height:11px; border-radius:3px; display:inline-block;}
+.cp-legend i.op{background:var(--amber);}
+.cp-legend i.ch{background:var(--green);}
+.cp-legend i.me{background:var(--steel);}
+.cp-legend i.re{background:var(--text-dim);}
+.cp-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--sh-sm);}
+table.cp-table{width:100%; min-width:1240px; border-collapse:collapse; font-size:12.5px; background:var(--panel);}
+table.cp-table caption{caption-side:top; text-align:left; font-size:10px; color:var(--text-dim); padding:0 0 6px;}
+table.cp-table thead th{
+  background:var(--panel2); color:var(--text-dim); font-weight:700;
+  text-transform:uppercase; letter-spacing:0.35px; text-align:center; vertical-align:middle;
+  border:1px solid var(--line); padding:9px 8px; white-space:nowrap;
+}
+table.cp-table thead tr.cp-grp th{
+  font-family:var(--sans); font-size:11px; letter-spacing:0.5px; color:var(--bg); padding:8px;
+  border-color:color-mix(in srgb, var(--line) 60%, transparent);
+}
+table.cp-table thead tr.cp-grp th.g-op{background:var(--amber);}
+table.cp-table thead tr.cp-grp th.g-ch{background:var(--green);}
+table.cp-table thead tr.cp-grp th.g-me{background:var(--steel);}
+table.cp-table thead tr.cp-grp th.g-re{background:color-mix(in srgb, var(--text-dim) 75%, var(--panel));}
+table.cp-table thead tr.cp-grp th.g-sn{background:var(--panel2); color:var(--text-dim);}
+table.cp-table thead tr.cp-fld th{font-family:var(--mono); font-size:10px; padding:7px 6px;}
+table.cp-table thead th .req{color:var(--red); font-weight:800; margin-left:1px;}
+table.cp-table tbody td{border:1px solid var(--line); padding:0; vertical-align:middle; text-align:center; background:var(--panel); height:40px;}
+table.cp-table tbody tr:nth-child(even) td{background:color-mix(in srgb, var(--panel2) 45%, var(--panel));}
+table.cp-table tbody tr:hover td{background:color-mix(in srgb, var(--steel) 6%, var(--panel));}
+table.cp-table tbody td.cp-sn{font-family:var(--mono); font-size:11px; color:var(--text-dim); width:34px;}
+table.cp-table tbody td.cp-view{padding:9px 8px; font-size:12.5px; text-align:center; line-height:1.4;}
+table.cp-table td.grp-end{border-right:2px solid var(--line);}
+table.cp-table td input, table.cp-table td select{
+  width:100%; min-height:0; height:40px; border:none; background:transparent; border-radius:0;
+  padding:6px 7px; font-size:12.5px; text-align:center; box-shadow:none;
+}
+table.cp-table td input::placeholder{color:var(--text-dim); opacity:0.65;}
+table.cp-table td input:focus, table.cp-table td select:focus{
+  background:color-mix(in srgb, var(--steel) 12%, transparent); box-shadow:inset 0 0 0 2px var(--steel); z-index:1; position:relative;
+}
+table.cp-table td.cp-rm{width:36px; padding:0;}
+table.cp-table td.cp-rm button{width:100%; height:40px; border:none; border-radius:0; background:transparent; color:var(--red); font-size:14px; cursor:pointer; transition:background .12s;}
+table.cp-table td.cp-rm button:hover{background:color-mix(in srgb, var(--red) 16%, transparent);}
+.cp-actions-row{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center;}
+.cp-actions-row .hint{font-size:10px;}
+.cp-char-wrap select, .cp-char-wrap .cpo_charNameManual{width:100%;}
+.cp-machine-wrap .cpo_machineManual{width:100%;}
+
+/* ---- Redesigned Control Plan data-entry: card-per-row layout instead of a wide table,
+   so nothing is hidden behind horizontal scrolling. ----
+   Compact-mode: every field is sized to its own content — short fields (Op No, Machine
+   Type, LCL/UCL, Sample Size) get a narrow fixed-ish width, longer fields (Process,
+   Characteristic, Measuring Instrument, Reaction Plan) keep room to read their text —
+   and all gaps/padding/heights are tightened so many more rows fit on one screen. */
+html{scroll-behavior:smooth;}
+.cp-form .panel{padding:10px 12px 12px; margin-bottom:10px;}
+.cp-form .panel h3{margin:0 0 8px; font-size:13px;}
+.cp-form .frow{gap:7px; margin-bottom:7px;}
+.cp-form label.fl{font-size:11px; margin-bottom:3px;}
+.cp-form input, .cp-form select, .cp-form textarea{
+  min-height:37px; height:37px; padding:6px 10px; font-size:14px; border-radius:6px; box-shadow:none;
+}
+.cp-form select{height:37px; min-height:37px; padding:0 28px 0 11px; background-size:5px 5px, 5px 5px; background-position:calc(100% - 15px) center, calc(100% - 11px) center;}
+.cp-form textarea#cp_remarks{height:auto; min-height:44px; padding:6px 9px;}
+/* ---- Compact, colour-coded card grid ----
+   Three visually distinct zones per row: a neutral header strip (Op / Process / Machine /
+   Fixture / Tool = "Process Details"), a green-tinted zone for Product Characteristic &
+   Specification, and an amber-tinted zone for Inspection Details / Control Method & Reaction —
+   so the eye jumps straight to the right field group without reading every label. Row heights,
+   gaps and paddings are pulled in tighter than before to cut dead space and fit more rows. */
+.cp-cardlist{display:flex; flex-direction:column; gap:6px; scroll-behavior:smooth;}
+.cp-card{
+  border:1px solid var(--line); border-radius:var(--r-sm); background:var(--panel);
+  overflow:hidden; content-visibility:auto; contain-intrinsic-size:1px 134px;
+  box-shadow:var(--sh-sm); transition:box-shadow .12s, border-color .12s;
+}
+.cp-card:hover{border-color:color-mix(in srgb, var(--steel) 45%, var(--line)); box-shadow:var(--sh-md);}
+.cp-card-head{
+  display:flex; align-items:center; gap:5px; flex-wrap:wrap;
+  padding:4px 7px 4px 5px; background:color-mix(in srgb, var(--steel) 13%, var(--panel2));
+  border-bottom:1px solid var(--line); border-left:3px solid var(--steel);
+}
+.cp-card-common{display:flex; gap:4px; flex-wrap:wrap; flex:1 1 auto; align-items:flex-end;}
+.cp-card-common .cp-f{flex:1 1 130px; min-width:100px;}
+.cp-card-common .cp-f:has(.cpo_opNo){flex:0 0 70px; min-width:70px;}
+.cp-card-common .cp-f:has(.cpo_machine){flex:0 0 108px; min-width:96px;}
+.cp-card-common .cp-f:has(.cpo_process){flex:1.3 1 140px; min-width:120px;}
+.cp-card-common .cp-f:has(.cpo_fixtureSel){flex:1.1 1 130px; min-width:110px;}
+.cp-card-common .cp-f:has(.cpo_toolFixGauge){flex:1.6 1 170px; min-width:140px;}
+.cp-card-common select, .cp-card-common input{width:100%;}
+.cp-card-samehint{
+  flex:1 1 auto; font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+}
+.cp-card-samehint a{color:var(--amber); text-decoration:underline; margin-left:4px; cursor:pointer;}
+.cp-card-rm{
+  flex:0 0 auto; background:transparent; border:1px solid var(--line); color:var(--red);
+  border-radius:var(--r-sm); width:20px; height:20px; cursor:pointer; font-size:10.5px; line-height:1;
+}
+.cp-card-rm:hover{background:color-mix(in srgb, var(--red) 14%, transparent);}
+.cp-card-body{padding:0;}
+.cp-grp{margin:0; padding:7px 9px; border-bottom:1px solid var(--line);}
+.cp-grp:last-child{border-bottom:none;}
+/* Product Characteristic & Specification zone — subtle green tint */
+.cp-grp:nth-of-type(1){background:color-mix(in srgb, var(--green) 6%, var(--panel)); border-left:3px solid color-mix(in srgb, var(--green) 55%, var(--line));}
+/* Inspection Details / Control Method & Reaction zone — subtle amber tint */
+.cp-grp:nth-of-type(2){background:color-mix(in srgb, var(--amber) 6%, var(--panel)); border-left:3px solid color-mix(in srgb, var(--amber) 55%, var(--line));}
+.cp-grp-title{
+  font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px;
+  color:var(--text-dim); margin-bottom:4px; display:flex; align-items:center; gap:5px; line-height:1.3;
+  font-weight:700;
+}
+.cp-seq-badge{
+  font-family:var(--mono); font-size:10px; font-weight:700; color:var(--steel);
+  background:color-mix(in srgb, var(--steel) 12%, var(--panel2)); border:1px solid color-mix(in srgb, var(--steel) 35%, var(--line));
+  border-radius:var(--r-sm); padding:2px 7px; display:inline-block; width:fit-content; margin-bottom:5px;
+}
+.cp-grp:nth-of-type(1) .cp-grp-title{color:color-mix(in srgb, var(--green) 80%, var(--text));}
+.cp-grp:nth-of-type(2) .cp-grp-title{color:color-mix(in srgb, var(--amber) 85%, var(--text));}
+.cp-grp-title .req{color:var(--red);}
+.cp-grp-row{display:grid; gap:6px; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));}
+/* Characteristic | LCL | UCL | Measuring Instrument | Gauge | Gauge Card No — all in one continuous row, each capped to its content */
+.cp-grp-row.spec{grid-template-columns:minmax(150px,220px) minmax(62px,80px) minmax(62px,80px) minmax(120px,190px) minmax(130px,190px) minmax(105px,150px); justify-content:start;}
+/* Sample Size (narrow, numeric) | Inspection Frequency | Control Method | Reaction Plan | Responsibility — one continuous row, capped, not stretched */
+.cp-grp-row.methods{grid-template-columns:minmax(70px,88px) minmax(150px,205px) minmax(125px,170px) minmax(175px,270px) minmax(135px,205px); justify-content:start;}
+.cpo_gaugeCardNo{font-family:var(--mono); color:var(--steel); font-weight:700; background:var(--bg); cursor:default;}
+.cp-f label{font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.3px; display:block; margin-bottom:2px; font-family:var(--mono); line-height:1.2;}
+.cp-f input, .cp-f select{width:100%; height:36px; min-height:36px; padding:4px 8px; font-size:14px; border-radius:5px; box-shadow:none; background-color:color-mix(in srgb, var(--panel) 88%, var(--bg));}
+.cp-f input:focus, .cp-f select:focus{background-color:var(--panel);}
+.cp-f select{padding:0 26px 0 9px; background-size:5px 5px, 5px 5px; background-position:calc(100% - 13px) center, calc(100% - 9px) center;}
+.cp-f input.cpo_lcl, .cp-f input.cpo_ucl, .cp-f input.cpo_sampleSize{text-align:center; padding:4px 5px;}
+@media (max-width:900px){
+  .cp-grp-row.spec{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:640px){
+  .cp-grp-row.spec{grid-template-columns:1fr;}
+  .cp-grp-row.methods{grid-template-columns:1fr 1fr;}
+  .cp-card-common .cp-f{flex:1 1 100%;}
+}
+.cp-actions-row{margin-top:6px;}
+.cp-savebar{
+  position:sticky; bottom:0; left:0; z-index:400; margin:0 -22px -22px;
+  padding:8px 22px; background:var(--panel); border-top:1px solid var(--line);
+  box-shadow:0 -6px 16px rgba(0,0,0,.18); display:flex; gap:10px; align-items:center;
+  border-radius:0 0 var(--r-md) var(--r-md);
+}
+.cp-savebar .hint{margin-left:12px; margin-right:auto;}
+
+/* ---- Characteristic ⇄ Measuring Instrument mapping: fast-pick chip grid ----
+   Replaces the old plain checkbox list (tiny hitboxes, uneven wrapping) with clickable
+   chips — the whole chip toggles, a compact check-badge shows state at a glance, and a
+   toolbar gives instant Select All / Clear plus a live selected count. */
+.cim-inst-toolbar{display:flex; align-items:center; gap:8px; margin:2px 0 8px;}
+.cim-inst-count{font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-right:auto;}
+.cim-inst-toolbar .btn{padding:5px 11px; font-size:11px; min-height:0;}
+.cim-inst-grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(158px,1fr)); gap:8px;
+  max-height:340px; overflow-y:auto; padding:3px;
+}
+.cim-inst-chip{
+  position:relative; display:flex; align-items:center; gap:9px; padding:10px 12px;
+  border:1.5px solid var(--line); border-radius:var(--r-md); background:var(--panel2);
+  cursor:pointer; font-size:13px; font-weight:500; color:var(--text); font-family:var(--sans);
+  user-select:none; min-width:0; line-height:1.25;
+  transition:border-color .12s, background-color .12s, box-shadow .12s;
+}
+.cim-inst-chip:hover{border-color:color-mix(in srgb, var(--steel) 55%, var(--line));}
+.cim-inst-chip input{position:absolute; opacity:0; width:0; height:0; margin:0;}
+.cim-chip-check{
+  flex:0 0 auto; width:17px; height:17px; border-radius:5px; border:1.5px solid var(--text-dim);
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;
+  color:transparent; background:var(--panel); transition:background-color .12s, border-color .12s, color .12s;
+}
+.cim-inst-chip.checked{
+  border-color:var(--steel); background:color-mix(in srgb, var(--steel) 15%, var(--panel));
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--steel) 45%, transparent);
+}
+.cim-inst-chip.checked .cim-chip-check{background:var(--steel); border-color:var(--steel); color:var(--bg);}
+.cim-chip-label{flex:1 1 auto; min-width:0; overflow-wrap:break-word;}
+.cim-inst-empty{grid-column:1/-1;}
+@media (max-width:640px){
+  .cim-inst-grid{grid-template-columns:repeat(auto-fill, minmax(130px,1fr));}
+}
+
+/* ---- Operation-boundary "Insert Operation Here" divider ----
+   Sits between two operation groups in the Control Plan card list; clicking it inserts a
+   brand-new blank operation right at that point, with its Op No auto-assigned to keep the
+   10/20/30... sequence correctly ascending (renumbering later operations only if there's no
+   free gap to slot into). Hidden by default, revealed on hover for a clean resting state. */
+.cp-insert-bar{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  height:14px; margin:-3px 0; cursor:pointer; z-index:2;
+}
+.cp-insert-bar::before{
+  content:''; position:absolute; left:0; right:0; top:50%; height:1px;
+  background:color-mix(in srgb, var(--steel) 35%, transparent); transition:background-color .12s;
+}
+.cp-insert-bar span{
+  position:relative; background:var(--bg); color:var(--text-dim); font-family:var(--mono);
+  font-size:9.5px; font-weight:700; padding:1px 10px; border:1px dashed var(--line);
+  border-radius:var(--r-pill); opacity:0; transform:scale(0.92); transition:opacity .12s, transform .12s, color .12s, border-color .12s;
+}
+.cp-insert-bar:hover::before{background:var(--steel);}
+.cp-insert-bar:hover span{opacity:1; transform:scale(1); color:var(--steel); border-color:var(--steel);}
+/* Detail-level insert (within one operation, between two characteristic rows) — green-tinted
+   to match the Characteristics zone, distinguishing it from the steel-toned operation insert. */
+.cp-insert-bar-detail:hover::before{background:var(--green);}
+.cp-insert-bar-detail:hover span{color:var(--green); border-color:var(--green);}

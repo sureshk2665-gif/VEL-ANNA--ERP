@@ -1,0 +1,148 @@
+/* ============================================================
+   GLOBAL POLISH LAYER — consistent field alignment, spacing,
+   sizing and color differentiation across every form & table.
+   ============================================================ */
+
+/* -- 1. Uniform field sizing everywhere (inputs/selects/textareas) -- */
+input, select, textarea,
+.cp-f input, .cp-f select,
+.cal-form-grid .ff input, .cal-form-grid .ff select,
+table select, table input{
+  box-sizing:border-box;
+}
+input[type="text"], input[type="number"], input[type="date"], input[type="email"],
+input[type="tel"], input[type="password"], input[type="search"], input[type="url"],
+input:not([type]), select, textarea{
+  min-height:36px;
+  line-height:1.3;
+}
+
+/* -- 2. Every "field box" (label above value/input) centers its label
+      and value consistently, and gets a subtle differentiated card -- */
+.cp-f, .cal-form-grid .ff, .info-cell{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.cp-f label, .cal-form-grid .ff label, .info-cell label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  font-family:var(--mono);
+  color:var(--text-dim);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* -- 3. info-grid / info-cell — clearer box separation + subtle
+      alternating tint so related fields are easy to scan -- */
+.info-grid{
+  box-shadow:var(--sh-sm);
+}
+.info-cell{
+  transition:background .12s;
+}
+.info-cell:hover{
+  background:color-mix(in srgb, var(--steel) 8%, var(--panel2));
+}
+.info-cell .val{
+  letter-spacing:0.1px;
+}
+
+/* -- 4. Section headers (h3/h4 acting as panel titles) get a left
+      accent bar for quick visual grouping, consistent across modules -- */
+.panel > h3, .panel > h4{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding-left:10px;
+  border-left:3px solid var(--steel);
+  margin-top:0;
+}
+
+/* -- 5. Generic form grids: enforce even column alignment + consistent
+      gap so fields line up in neat rows regardless of module -- */
+.cp-form-grid, .cal-form-grid, .brc-grid, .stov-row, .gauge-stats{
+  align-items:stretch;
+}
+
+/* -- 6. Table polish: crisper header/row contrast + consistent
+      vertical rhythm across every table in the app -- */
+table th{
+  background:color-mix(in srgb, var(--steel) 12%, var(--panel2));
+}
+table td{
+  vertical-align:middle;
+}
+table tbody tr:nth-child(even) td{
+  background:color-mix(in srgb, var(--steel) 5%, transparent);
+}
+table tbody tr:hover td{
+  background:color-mix(in srgb, var(--steel) 12%, transparent) !important;
+}
+table .num, table td.num{
+  text-align:right;
+  font-family:var(--mono);
+}
+
+/* -- 7. Status-style numeric cells (e.g. 0 vs non-zero) get gentle
+      color differentiation for faster scanning without being loud -- */
+table td.num.zero, table td[data-zero="1"]{
+  color:var(--text-dim);
+}
+table td.num.positive, table td[data-positive="1"]{
+  color:var(--green);
+  font-weight:600;
+}
+
+/* -- 8. Cards/panels: consistent internal spacing so every module
+      feels like part of one coherent design system -- */
+.panel, .card{
+  scroll-margin-top:12px;
+}
+.panel + .panel{
+  margin-top:10px;
+}
+@media (max-width:1280px){ .app-grid{ grid-template-columns:repeat(6, minmax(0,1fr)); } }
+@media (max-width:1080px){ .app-grid{ grid-template-columns:repeat(5, minmax(0,1fr)); } }
+@media (max-width:860px){ .app-grid{ grid-template-columns:repeat(4, minmax(0,1fr)); } }
+@media (max-width:640px){ .app-grid{ grid-template-columns:repeat(3,1fr); gap:16px 8px; } }
+@media (max-width:480px){
+  .app-grid{ grid-template-columns:repeat(3,1fr); gap:16px 8px; }
+  .app-icon{ width:56px; height:56px; font-size:24px; border-radius:15px; }
+}
+
+/* Grid-box record cards — used across all modules for easy scanning */
+.grid-box{display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:14px; align-items:start;}
+.inv-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; align-items:start;}
+.bom-table{width:100%; min-width:1100px; border-collapse:collapse; margin-top:8px; font-size:12px;}
+.bom-table th{text-align:left; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); border-bottom:1px solid var(--line); padding:7px 8px; white-space:nowrap;}
+.bom-table td{padding:7px 8px; border-bottom:1px dashed var(--line); color:var(--text);}
+.bom-table td.num{text-align:right; font-family:var(--mono);}
+.bom-table tbody tr:hover{background:var(--panel2);}
+.bom-lookup-head{font-size:11.5px; margin-bottom:2px;}
+.bom-lookup-head strong{color:var(--amber);}
+.bom-fp-card{background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-md); padding:15px 17px; margin-bottom:15px;}
+.bom-fp-card .bfc-title{font-size:14px; font-weight:700; color:var(--text);}
+.bom-fp-card .bfc-sub{font-size:11px; color:var(--text-dim); font-family:var(--mono); margin-bottom:8px;}
+.bom-row-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md); padding:12px; margin-top:10px;}
+.brc-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;}
+.brc-box{border-radius:8px; padding:10px 12px; border-left:4px solid var(--line);}
+.brc-box-title{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; opacity:0.85;}
+.brc-kv{display:flex; justify-content:space-between; gap:8px; font-size:12.5px; padding:2px 0;}
+.brc-kv span{color:var(--text-dim);}
+.brc-kv b{color:var(--text); text-align:right;}
+.brc-blue{background:rgba(59,130,246,0.10); border-left-color:#3b82f6;}
+.brc-blue .brc-box-title{color:#3b82f6;}
+.brc-teal{background:rgba(20,184,166,0.10); border-left-color:#14b8a6;}
+.brc-teal .brc-box-title{color:#14b8a6;}
+.brc-orange{background:rgba(249,115,22,0.10); border-left-color:#f97316;}
+.brc-orange .brc-box-title{color:#f97316;}
+.brc-green{background:rgba(34,197,94,0.10); border-left-color:#22c55e;}
+.brc-green .brc-box-title{color:#22c55e;}
+.brc-purple{background:rgba(168,85,247,0.10); border-left-color:#a855f7;}
+.brc-purple .brc-box-title{color:#a855f7;}
+.brc-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
+@media (max-width:640px){ .brc-grid{grid-template-columns:1fr;} }

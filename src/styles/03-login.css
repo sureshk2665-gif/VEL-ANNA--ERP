@@ -1,0 +1,17 @@
+.loginOverlay{position:fixed; inset:0; background:
+    radial-gradient(1100px 700px at 15% 10%, color-mix(in srgb, var(--steel) 14%, transparent), transparent 60%),
+    radial-gradient(900px 600px at 90% 90%, color-mix(in srgb, var(--amber) 10%, transparent), transparent 60%),
+    var(--bg);
+  display:flex; align-items:center; justify-content:center; z-index:100; padding:12px;}
+.loginOverlay.hide{display:none;}
+.loginBox{background:var(--panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:36px 32px; width:100%; max-width:360px; box-shadow:var(--sh-lg);}
+.loginBox .lh{margin-bottom:22px; text-align:center;}
+.loginBox .lt1{font-size:20px; font-weight:800; color:var(--text); display:flex; align-items:center; justify-content:center; gap:10px;}
+.loginBox .lt2{font-size:11.5px; color:var(--text-dim); margin-top:5px;}
+.loginBox .v-logo{display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--steel),var(--amber)); color:#12151a; font-weight:800; font-size:16px; box-shadow:var(--sh-sm);}
+.loginBox .field{margin-bottom:16px;}
+.loginBox label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-dim); font-family:var(--mono); display:block; margin-bottom:6px;}
+.loginBox input{width:100%;}
+.loginErr{color:var(--red); font-size:11.5px; margin:-6px 0 10px; display:none;}
+.loginErr.show{display:block;}
+.loginHint{text-align:center; font-size:10.5px; color:var(--text-dim); margin-top:16px; font-family:var(--mono); line-height:1.7;}

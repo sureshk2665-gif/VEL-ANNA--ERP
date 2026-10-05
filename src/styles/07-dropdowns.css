@@ -1,0 +1,149 @@
+/* ===== Standard Searchable Dropdown (srch-dd) — the one consistent list/dropdown
+   design used across every ERP module (Customer pickers, etc.): a clean display box
+   with a visible arrow, opening a searchable list with live filter-as-you-type.
+   Compact, light-grey, checkbox-free: clicking a row selects it immediately and
+   closes the list — plain list-selection behaviour, optimized for fast data entry. ===== */
+.srch-dd{ position:relative; text-align:left; }
+.srch-dd-display{ display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; background:color-mix(in srgb, var(--panel2) 45%, var(--panel)); border:1px solid var(--line); border-radius:var(--r-md); padding:0 14px; height:40px; font-size:13.5px; font-weight:500; color:var(--text); user-select:none; box-shadow:var(--sh-sm); transition:border-color .15s ease, box-shadow .15s ease, transform .1s ease, background .15s ease; }
+.srch-dd-display:hover{ border-color:var(--steel); box-shadow:var(--sh-md); }
+.srch-dd-display:active{ transform:scale(0.99); }
+.srch-dd-display span:first-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.srch-dd-display.placeholder span:first-child{ color:var(--text-dim); font-weight:400; }
+.srch-dd-arrow{ color:var(--steel); font-size:11px; transition:transform .18s ease; flex:none; opacity:0.85; }
+.srch-dd.open .srch-dd-arrow{ transform:rotate(180deg); }
+.srch-dd.open .srch-dd-display{ border-color:var(--steel); box-shadow:var(--focus-ring), var(--sh-md); }
+.srch-dd-panel{ position:absolute; top:calc(100% + 5px); left:0; right:0; z-index:9999; background:#f5f6f8; border:1px solid #d8dce1; border-radius:8px; box-shadow:var(--sh-lg); max-height:300px; display:flex; flex-direction:column; overflow:hidden; animation:srchDDIn .14s ease; }
+.srch-dd.drop-up .srch-dd-panel{ top:auto; bottom:calc(100% + 5px); animation:srchDDInUp .14s ease; }
+@keyframes srchDDInUp{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes srchDDIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:translateY(0); } }
+.srch-dd-search{ border:none; border-bottom:1px solid #d8dce1; padding:7px 10px; font-size:12px; background:#eceef1; color:#1f2733; outline:none; font-family:var(--sans); flex:none; }
+.srch-dd-search::placeholder{ color:#8a94a3; }
+.srch-dd-list{ overflow-y:auto; max-height:250px; padding:4px; }
+.srch-dd-item{ padding:5px 10px; font-size:12.5px; cursor:pointer; color:#232a33; line-height:1.3; border-radius:4px; margin-bottom:1px; transition:background .1s ease; }
+.srch-dd-item:last-child{ margin-bottom:0; }
+.srch-dd-item:hover{ background:#dde4ea; color:#151b22; }
+.srch-dd-item.muted{ color:#7a8494; font-style:italic; border-top:1px solid #d8dce1; border-radius:0; margin-top:3px; padding-top:8px; }
+.srch-dd-item.muted:hover{ background:#e4e8ec; }
+.srch-dd-item.selected{ background:#e4ecf3; color:#1f5f8f; font-weight:600; }
+.srch-dd-idtag{ float:right; font-family:var(--mono); font-size:10px; color:#8a94a3; }
+.srch-dd-item:hover .srch-dd-idtag, .srch-dd-item.selected .srch-dd-idtag{ color:#5b6d80; }
+.cust-id-tag{ font-family:var(--mono); font-size:10.5px; color:var(--text-dim); margin-top:4px; letter-spacing:0.2px; }
+.srch-dd-empty{ padding:12px; font-size:11.5px; color:#8a94a3; font-style:italic; display:none; text-align:center; }
+.itemRowsWrap{display:flex; flex-direction:column; gap:8px;}
+.itemRow{border:1px solid var(--line); border-radius:var(--r-md); padding:10px; background:var(--panel2); border-left:3px solid color-mix(in srgb, var(--steel) 45%, var(--line));}
+.itemRow .frow{text-align:left;}
+.itemRow .fl{text-align:left;}
+.itemRowTop{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+.itemRowNo{font-family:var(--mono); font-size:11.5px; color:var(--steel); text-transform:uppercase; letter-spacing:0.6px; font-weight:700;}
+@media (max-width:720px){ .itemRow .frow.g4{grid-template-columns:1fr 1fr;} }
+label.fl{font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; display:block; margin-bottom:3px; font-family:var(--mono); text-align:center; font-weight:600;}
+input, select, textarea{
+  width:100%; background:color-mix(in srgb, var(--panel2) 55%, var(--bg)); border:1px solid var(--line); color:var(--text);
+  padding:7px 10px; font-size:13.5px; border-radius:var(--r-sm); font-family:var(--sans); text-align:center;
+  transition:border-color .12s, box-shadow .12s, background .12s; min-height:34px;
+}
+input:hover, textarea:hover{border-color:color-mix(in srgb, var(--steel) 45%, var(--line));}
+input:focus, select:focus, textarea:focus{outline:none; border-color:var(--steel-dim); box-shadow:var(--focus-ring); background:var(--panel);}
+input::placeholder, textarea::placeholder{color:var(--text-dim); opacity:0.7;}
+textarea{resize:vertical; min-height:52px;}
+/* ===== ERP-wide standard dropdown look — applied to every native <select> so every
+   list/dropdown across all modules shares one consistent design (rounded card, shadow,
+   arrow, spacing, colors) even before/without the full searchable widget swap-in.
+   Functionality (onchange, values, options) is completely unchanged — visual only. ===== */
+select{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  height:40px; min-height:40px; padding:0 34px 0 14px; font-size:13.5px; font-weight:500;
+  text-align:left; border-radius:var(--r-md); box-shadow:var(--sh-sm); cursor:pointer;
+  background-color:color-mix(in srgb, var(--panel2) 45%, var(--panel));
+  background-image:linear-gradient(45deg, transparent 50%, var(--steel) 50%), linear-gradient(135deg, var(--steel) 50%, transparent 50%);
+  background-position:calc(100% - 18px) center, calc(100% - 13px) center;
+  background-size:5px 5px, 5px 5px; background-repeat:no-repeat;
+  transition:border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+select:hover{ border-color:var(--steel); box-shadow:var(--sh-md); background-color:var(--panel); }
+select:focus{ border-color:var(--steel); box-shadow:var(--focus-ring), var(--sh-md); }
+select:disabled{ cursor:not-allowed; opacity:0.6; box-shadow:none; }
+select option{ background:var(--panel); color:var(--text); }
+/* Compact selects inside tables (Rights matrix, Control Plan grid, etc.) keep their
+   original tight sizing — the card-style look is for form fields, not dense table cells. */
+table select{ height:auto; min-height:28px; padding:5px 24px 5px 8px; border-radius:var(--r-sm); box-shadow:none; background-size:4px 4px, 4px 4px; background-position:calc(100% - 12px) center, calc(100% - 8px) center; }
+
+/* ===== Standard searchable dropdown widget (applied to every <select> ERP-wide) =====
+   Matches one single design across all modules: light card-style trigger button, and a
+   popover panel with a search field + option list, rounded corners, soft shadow. The
+   original <select> is kept in the DOM (hidden) so all existing value/onchange code keeps
+   working untouched — this is a pure visual/UX layer on top. */
+.cdd-wrap{ position:relative; width:100%; }
+.cdd-wrap select.cdd-native{ position:absolute; inset:0; width:100%; height:100%; opacity:0; pointer-events:none; z-index:-1; }
+.cdd-trigger{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:color-mix(in srgb, var(--panel2) 45%, var(--panel)); border:1px solid var(--line); color:var(--text);
+  padding:0 14px; height:40px; min-height:40px; font-size:13.5px; font-weight:500; font-family:var(--sans);
+  border-radius:var(--r-md); box-shadow:var(--sh-sm); cursor:pointer; text-align:left;
+  transition:border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.cdd-trigger:hover{ border-color:var(--steel); box-shadow:var(--sh-md); background:var(--panel); }
+.cdd-trigger.open{ border-color:var(--steel); box-shadow:var(--focus-ring), var(--sh-md); }
+.cdd-trigger:disabled{ cursor:not-allowed; opacity:0.6; box-shadow:none; }
+.cdd-trigger .cdd-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cdd-trigger .cdd-label.placeholder{ color:var(--text-dim); }
+.cdd-trigger .cdd-caret{ flex:none; width:9px; height:9px; border-right:2px solid var(--steel); border-bottom:2px solid var(--steel); transform:rotate(45deg); margin-top:-3px; transition:transform .15s ease; }
+.cdd-trigger.open .cdd-caret{ transform:rotate(-135deg); margin-top:3px; }
+.cdd-panel{
+  position:absolute; top:calc(100% + 6px); left:0; width:max(100%, 220px); z-index:400;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--sh-lg);
+  padding:8px; display:none;
+}
+.cdd-panel.open{ display:block; }
+.cdd-search{
+  width:100%; box-sizing:border-box; background:var(--bg); border:1px solid var(--line); color:var(--text);
+  padding:8px 10px; font-size:13px; border-radius:var(--r-sm); text-align:left; margin-bottom:6px; min-height:32px;
+}
+.cdd-search:focus{ outline:none; border-color:var(--steel-dim); box-shadow:var(--focus-ring); }
+.cdd-list{ max-height:240px; overflow-y:auto; }
+.cdd-option{ padding:8px 10px; font-size:13.5px; color:var(--text); border-radius:var(--r-sm); cursor:pointer; text-align:left; }
+.cdd-option:hover{ background:color-mix(in srgb, var(--panel2) 70%, var(--bg)); }
+.cdd-option.sel{ background:color-mix(in srgb, var(--steel) 18%, var(--panel)); color:var(--steel-dim); font-weight:700; }
+.cdd-option.placeholder{ color:var(--text-dim); }
+.cdd-option.disabled{ opacity:0.5; cursor:not-allowed; }
+.cdd-empty{ padding:10px; font-size:12.5px; color:var(--text-dim); text-align:center; }
+/* Force one uniform look for the dropdown trigger everywhere — same font size, padding,
+   height and background in every module/sub-module/table, regardless of any older
+   context-specific select sizing rules (table select, .cp-form select, .rights-table
+   select, .unitpick select, etc.) that used to make dropdowns look different from screen
+   to screen. Those rules still apply to the hidden native <select>, but no longer affect
+   what the user actually sees. */
+.cdd-trigger, table .cdd-trigger, .rights-table .cdd-trigger, .cp-form .cdd-trigger,
+.cp-f .cdd-trigger, .unitpick .cdd-trigger, #activeUnitPick .cdd-trigger,
+table.cp-table td .cdd-trigger{
+  height:40px !important; min-height:40px !important; padding:0 14px !important;
+  font-size:13.5px !important; font-weight:500 !important; border-radius:var(--r-md) !important;
+  box-shadow:var(--sh-sm) !important; max-width:none !important; width:100% !important;
+  background:color-mix(in srgb, var(--panel2) 45%, var(--panel)) !important;
+}
+
+button.btn{
+  background:var(--steel-dim); color:#fff; border:1px solid color-mix(in srgb, var(--steel-dim) 70%, black 10%); padding:8px 16px;
+  border-radius:var(--r-sm); font-size:13px; cursor:pointer; font-weight:600; text-align:center;
+  transition:background .12s, box-shadow .12s, transform .06s, border-color .12s;
+  box-shadow:var(--sh-sm); min-height:34px;
+}
+button.btn:hover{background:var(--steel); border-color:var(--steel); box-shadow:var(--sh-md);}
+button.btn:active{transform:translateY(1px); box-shadow:none;}
+button.btn.amber{background:var(--amber-dim); border-color:color-mix(in srgb, var(--amber-dim) 70%, black 10%);}
+button.btn.amber:hover{background:var(--amber); border-color:var(--amber); color:#1a1a1a;}
+button.btn.ghost{background:transparent; border:1px solid var(--line); color:var(--text-dim); box-shadow:none;}
+button.btn.ghost:hover{border-color:var(--steel); color:var(--text); background:var(--panel2);}
+button.btn.danger{background:transparent; color:var(--red); border:1px solid color-mix(in srgb, var(--red) 40%, var(--line)); padding:6px 11px; font-size:11px; box-shadow:none;}
+button.btn.danger:hover{background:color-mix(in srgb, var(--red) 14%, transparent);}
+button.btn.small{padding:6px 11px; font-size:11px;}
+button.btn:disabled{opacity:0.5; cursor:not-allowed; box-shadow:none;}
+
+.subtabs{display:flex; gap:4px; margin-bottom:12px; border-bottom:1px solid var(--line); overflow-x:auto;}
+.subtabs button{border-radius:var(--r-sm) var(--r-sm) 0 0; transition:background .15s, color .15s, transform .1s;}
+.subtabs button:hover{transform:translateY(-1px);}
+.subtabs button{
+  background:none; border:none; padding:10px 16px; font-size:14px; font-weight:700;
+  cursor:pointer; font-family:var(--sans); border-bottom:2px solid transparent; margin-bottom:-1px;
+  white-space:nowrap; transition:color .12s, opacity .12s; opacity:0.82;
+}

@@ -1,0 +1,191 @@
+/* ---- Part Number 360° Flow View — stage stepper ---- */
+.p360-flow{ display:flex; align-items:stretch; gap:22px; overflow-x:auto; padding:4px 2px 14px; }
+.p360-stage{ flex:1 1 160px; min-width:160px; background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 14px; position:relative; box-shadow:var(--sh-sm); }
+.p360-stage::after{ content:'→'; position:absolute; right:-19px; top:50%; transform:translateY(-50%); color:var(--steel); font-size:18px; font-weight:800; }
+.p360-stage:last-child::after{ content:''; }
+.p360-stage.current{ border-color:var(--amber); box-shadow:0 0 0 2px color-mix(in srgb, var(--amber) 30%, transparent); }
+.p360-label{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--steel-dim); margin-bottom:8px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+.p360-row{ display:flex; justify-content:space-between; gap:8px; font-size:12.5px; padding:2px 0; }
+.p360-row .k{ color:var(--text-dim); }
+.p360-row .v{ font-weight:700; }
+.p360-row.rej .v{ color:var(--red); }
+.p360-row.ok .v{ color:var(--green); }
+.reportFilterPanel{border-left:3px solid var(--amber);}
+/* ---- Reports hub — card grid landing screen per module (screenshot-style) ---- */
+.report-hub-panel{padding:12px 22px 22px;}
+.report-hub-title{display:flex; align-items:center; gap:8px; font-size:16px; font-weight:800; color:var(--text); margin-bottom:16px;}
+.report-hub-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:14px;}
+.report-hub-card{
+  display:flex; align-items:flex-start; gap:12px; padding:16px 14px; border:1px solid var(--line);
+  border-radius:var(--r-md); background:var(--panel); cursor:pointer; transition:box-shadow .12s, border-color .12s, transform .12s;
+}
+.report-hub-card:hover{box-shadow:var(--sh-md); border-color:color-mix(in srgb, var(--steel) 45%, var(--line)); transform:translateY(-1px);}
+.report-hub-card:focus-visible{outline:2px solid var(--steel); outline-offset:2px;}
+.report-hub-card-icon{flex:0 0 auto; font-size:22px; line-height:1; width:34px; height:34px; display:flex; align-items:center; justify-content:center;}
+.report-hub-card-body{flex:1 1 auto; min-width:0;}
+.report-hub-card-title{font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px;}
+.report-hub-card-desc{font-size:12px; color:var(--text-dim); line-height:1.4;}
+.report-hub-card-arrow{flex:0 0 auto; color:var(--text-dim); font-size:18px; align-self:center;}
+.report-table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--sh-sm);}
+table.report-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+table.report-table th{background:var(--panel2); color:var(--steel); text-transform:uppercase; letter-spacing:0.4px; font-size:11px; font-weight:700; font-family:var(--mono); text-align:left; padding:13px 15px; border-bottom:2px solid var(--line); position:sticky; top:0; white-space:nowrap; z-index:1;}
+table.report-table td{padding:12px 15px; border-bottom:1px solid var(--line); color:var(--text); vertical-align:top;}
+/* Truncates long free-text cells (Part Name, Tool Name, etc.) to one line with an ellipsis,
+   so a single long name can't stretch that row taller than its neighbours — the full text is
+   still available via the native title tooltip on hover. Used across all .report-table and
+   .plan-table instances (Job Work Stock, Tool Master, Planning Performance Report, etc.). */
+.rt-truncate{max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+@media (max-width:1100px){ .rt-truncate{max-width:150px;} }
+table.report-table tbody tr:hover td{background:color-mix(in srgb, var(--steel) 11%, transparent);}
+table.report-table tbody tr:nth-child(even) td{background:color-mix(in srgb, var(--steel) 6%, transparent);}
+table.report-table th.num, table.report-table td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+/* Wide/many-column reports (e.g. Material Ledger) get tighter cell padding and a smaller
+   font on screen so all columns stay readable without excessive horizontal scrolling. */
+table.report-table-wide th, table.report-table-wide td{padding:10px 10px; font-size:12.5px;}
+table.report-table-wide th{white-space:nowrap;}
+table.labour-stock-table th{padding:6px 5px; font-size:9.5px; white-space:normal; line-height:1.3;}
+table.labour-stock-table td{padding:4px 6px; font-size:12px; vertical-align:middle; line-height:1.3;}
+table.labour-stock-table td .csm-tag{font-size:9px; color:var(--steel); white-space:nowrap;}
+table.labour-stock-table td.rt-truncate{max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+table.labour-stock-table .lsIssueQtyInput{width:60px;}
+/* Strict tabular grid: fixed column widths so every row's cells line up in straight vertical
+   columns, with every cell (header + body) center-aligned. */
+table.labour-stock-table{table-layout:fixed;}
+table.labour-stock-table th, table.labour-stock-table td{text-align:center; border-right:1px solid var(--line);}
+table.labour-stock-table th:last-child, table.labour-stock-table td:last-child{border-right:none;}
+table.labour-stock-table td.rt-truncate{max-width:none; white-space:normal; text-overflow:clip; overflow:visible;}
+table.labour-stock-table .lsIssueQtyInput{text-align:center;}
+table.labour-stock-table td.lst-issue-cell{white-space:normal;}
+table.labour-stock-table .lst-issue-wrap{display:flex; flex-direction:row; align-items:center; justify-content:center; gap:4px; padding:2px 0; flex-wrap:nowrap;}
+table.labour-stock-table .lsIssueQtyInput{width:72px; max-width:100%; padding:4px 5px; flex:0 0 auto;}
+table.labour-stock-table .lst-issue-wrap .btn{width:auto; white-space:nowrap; padding:4px 8px; font-size:11px; flex:0 0 auto;}
+table.labour-stock-table tr.lst-group-row td{
+  text-align:left; background:var(--panel2) !important; color:var(--steel); font-family:var(--mono);
+  font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase;
+  padding:7px 12px; border-bottom:2px solid var(--line); border-right:none;
+}
+table.labour-stock-table tr.lst-group-row:hover td{background:var(--panel2) !important;}
+/* ---- Planning module: fast-entry grid (all Finished Part Numbers on one screen) ---- */
+table.plan-table{width:100%; border-collapse:collapse; font-size:13px;}
+table.plan-table th{background:var(--panel2); color:var(--steel); text-transform:uppercase; letter-spacing:0.4px; font-size:10.5px; font-weight:700; font-family:var(--mono); text-align:left; padding:10px 10px; border-bottom:2px solid var(--line); position:sticky; top:0; white-space:nowrap; z-index:1;}
+table.plan-table td{padding:0; border-bottom:1px solid var(--line); color:var(--text); vertical-align:middle; height:44px;}
+table.plan-table td.pt-text{padding:8px 10px;}
+table.plan-table tbody tr:nth-child(4n+1) td, table.plan-table tbody tr:nth-child(4n+2) td{background:color-mix(in srgb, var(--panel2) 40%, var(--panel));}
+table.plan-table tbody tr.plan-row:hover td{background:color-mix(in srgb, var(--steel) 10%, transparent);}
+table.plan-table tbody tr.plan-row.highlight td{background:color-mix(in srgb, var(--amber) 18%, transparent) !important;}
+table.plan-table td input{width:100%; min-height:0; height:44px; border:none; background:transparent; border-radius:0; padding:6px 10px; font-size:13px; box-shadow:none;}
+table.plan-table td.pt-qty{height:auto;}
+table.plan-table td.pt-qty input{height:44px;}
+table.plan-table td input:focus{background:color-mix(in srgb, var(--steel) 14%, transparent); box-shadow:inset 0 0 0 2px var(--steel); z-index:1; position:relative;}
+table.plan-table td input.input-error{background:color-mix(in srgb, #b23b3b 14%, transparent) !important; box-shadow:inset 0 0 0 2px #b23b3b !important; z-index:1; position:relative;}
+.plan-qty-err{display:block; font-size:10.5px; color:#b23b3b; font-weight:700; padding:2px 10px 0; white-space:nowrap;}
+table.plan-table td.pt-qty input{font-weight:700;}
+table.plan-table tr.history-row td{background:color-mix(in srgb, var(--panel2) 55%, var(--panel)); padding:8px 10px 12px 24px; border-bottom:2px solid var(--line);}
+.plan-table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--sh-sm); max-height:74vh; overflow-y:auto;}
+
+/* ==== Planning entry cells — consistent colour language across the whole Planning screen ====
+   Blue/dashed  = INPUT cell (you type here)
+   Green tint   = SAVED value (already logged, still editable inline)
+   Grey/flat    = SYSTEM-CALCULATED, read-only (Committed / Balance / totals) */
+table.plan-table td.cell-io input:not(.input-error), .cell-io-box{
+  background:color-mix(in srgb, var(--steel) 9%, var(--panel)) !important;
+  box-shadow:inset 0 0 0 1.5px dashed color-mix(in srgb, var(--steel) 55%, transparent) !important;
+  font-weight:700;
+}
+table.plan-table td.cell-io input::placeholder{color:var(--text-dim); font-weight:500;}
+table.plan-table td.cell-io input:disabled{
+  opacity:.5; font-weight:500; cursor:not-allowed;
+  background:var(--panel2) !important;
+  box-shadow:inset 0 0 0 1.5px dashed color-mix(in srgb, var(--steel) 22%, transparent) !important;
+}
+table.plan-table td.cell-io input:focus:not(.input-error){
+  background:color-mix(in srgb, var(--steel) 18%, var(--panel)) !important;
+  box-shadow:inset 0 0 0 2px var(--steel) !important;
+}
+table.plan-table td.cell-calc{
+  background:color-mix(in srgb, var(--panel2) 70%, var(--panel)) !important;
+  color:var(--text-dim); font-weight:700; font-family:var(--mono);
+}
+table.plan-table td.cell-calc{line-height:1.25;}
+table.plan-table td.cell-calc .cc-val{color:var(--text); font-size:14px; display:block;}
+table.plan-table td.cell-calc .cc-lbl{display:block; font-size:8.5px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; color:var(--text-dim); font-family:var(--sans, inherit); margin-top:1px;}
+.qty-recent{font-size:10px; color:var(--green,#278449); font-weight:700; padding:1px 10px 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.qty-recent.flash{animation:qtyFlash 1.1s ease-out;}
+@keyframes qtyFlash{ 0%{ background:color-mix(in srgb, var(--green,#278449) 35%, transparent); } 100%{ background:transparent; } }
+
+/* ---- Entries panel (per-part Schedule / Commitment ledger) — cell-grid design ---- */
+.entry-wrap{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media (max-width:900px){ .entry-wrap{grid-template-columns:1fr;} }
+.entry-card{border:1px solid var(--line); border-radius:var(--r-md,8px); overflow:hidden; background:var(--panel);}
+.entry-card .ec-head{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 10px; background:var(--panel2); border-bottom:1px solid var(--line);}
+.entry-card .ec-head .ec-title{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.3px; color:var(--steel);}
+.entry-card .ec-head .ec-total{font-size:12px; font-weight:800; font-family:var(--mono); background:color-mix(in srgb, var(--panel2) 60%, var(--panel)); border:1px solid var(--line); border-radius:5px; padding:2px 8px; color:var(--text);}
+.entry-card.sched .ec-head{border-left:3px solid var(--steel);}
+.entry-card.commit .ec-head{border-left:3px solid var(--green,#278449);}
+.entry-addrow{display:grid; grid-template-columns:118px 1fr 34px; gap:6px; align-items:center; padding:8px; background:color-mix(in srgb, var(--steel) 7%, var(--panel)); border-bottom:1.5px dashed color-mix(in srgb, var(--steel) 45%, transparent);}
+.entry-addrow input{width:100%; height:32px; padding:4px 8px; font-size:12.5px; border-radius:5px; border:1px solid var(--line); background:color-mix(in srgb, var(--steel) 10%, var(--panel)); box-sizing:border-box; font-weight:700;}
+.entry-addrow input:focus{background:color-mix(in srgb, var(--steel) 20%, var(--panel)); box-shadow:inset 0 0 0 2px var(--steel);}
+.entry-addrow button{height:32px; width:34px; border-radius:5px; border:1px solid var(--steel); background:var(--steel); color:#fff; font-weight:800; cursor:pointer; font-size:15px; line-height:1;}
+.entry-addrow button:hover{filter:brightness(1.08);}
+.entry-list{max-height:190px; overflow-y:auto;}
+.entry-row{display:grid; grid-template-columns:118px 1fr 34px; gap:6px; align-items:center; padding:6px 8px; border-bottom:1px solid var(--line);}
+.entry-row:last-child{border-bottom:none;}
+.entry-row:nth-child(odd){background:color-mix(in srgb, var(--green,#278449) 6%, var(--panel));}
+.entry-row:nth-child(even){background:color-mix(in srgb, var(--green,#278449) 11%, var(--panel));}
+.entry-row.commit-flash{animation:qtyFlash 1.4s ease-out;}
+.entry-row input{width:100%; height:30px; padding:3px 7px; font-size:12.5px; border-radius:4px; border:1px solid transparent; background:transparent; box-sizing:border-box; font-weight:600; color:var(--text);}
+.entry-row input:hover{border-color:var(--line);}
+.entry-row input:focus{background:var(--panel); border-color:var(--steel); box-shadow:inset 0 0 0 1.5px var(--steel);}
+.entry-row .er-del{height:26px; width:26px; border-radius:5px; border:1px solid color-mix(in srgb, #b23b3b 40%, var(--line)); background:transparent; color:#b23b3b; cursor:pointer; font-size:12px;}
+.entry-row .er-del:hover{background:color-mix(in srgb, #b23b3b 14%, transparent);}
+.entry-empty{padding:14px 10px; text-align:center; color:var(--text-dim); font-size:11.5px; font-style:italic;}
+.cell-legend{display:flex; gap:14px; align-items:center; flex-wrap:wrap; font-size:10.5px; color:var(--text-dim); margin:2px 0 10px;}
+.cell-legend .lg-item{display:flex; align-items:center; gap:5px;}
+.cell-legend .lg-swatch{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.cell-legend .lg-swatch.io{background:color-mix(in srgb, var(--steel) 22%, var(--panel)); box-shadow:inset 0 0 0 1.5px dashed color-mix(in srgb, var(--steel) 60%, transparent);}
+.cell-legend .lg-swatch.saved{background:color-mix(in srgb, var(--green,#278449) 22%, var(--panel)); border:1px solid var(--line);}
+.cell-legend .lg-swatch.calc{background:var(--panel2); border:1px solid var(--line);}
+/* Machine Capacity Report — Planned Parts detail table: centered cells with individual
+   cell boxes (grid look) for easier scanning, plus light colour accents for CNC / VMC hrs. */
+table.mc-detail-table th{text-align:center; border-right:1px solid var(--line);}
+table.mc-detail-table th:last-child{border-right:none;}
+table.mc-detail-table td{text-align:center; border-right:1px solid var(--line);}
+table.mc-detail-table td:last-child{border-right:none;}
+table.plan-table.mc-detail-table td.pt-num{text-align:center;}
+table.plan-table.mc-detail-table th.pt-num-h{text-align:center;}
+table.mc-detail-table td.rt-truncate{text-align:left;}
+table.mc-detail-table td.mc-cnc-cell{color:var(--steel); font-weight:700; background:color-mix(in srgb, var(--steel) 10%, transparent);}
+table.mc-detail-table td.mc-vmc-cell{color:var(--amber); font-weight:700; background:color-mix(in srgb, var(--amber) 10%, transparent);}
+table.mc-detail-table tfoot tr.mc-total-row td{background:var(--panel2); border-top:2px solid var(--line); position:sticky; bottom:0; font-size:13.5px; padding:10px;}
+.plan-toolbar{display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:space-between; margin-bottom:10px;}
+.plan-toolbar .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.plan-toolbar label.fl{margin:0; white-space:nowrap;}
+.plan-toolbar input[type=date]{max-width:150px;}
+.plan-toolbar input[type=text]{max-width:220px;}
+
+/* ---- Planning Performance Report — visual components ---- */
+.perf-card .v{font-size:18px;}
+.perf-card.warn .v{color:var(--amber);}
+.perf-card.bad .v{color:var(--red);}
+.perf-card.good .v{color:var(--green);}
+.dv-wrap{display:flex; align-items:center; gap:8px; min-width:110px;}
+.dv-track{flex:1 1 auto; height:7px; border-radius:var(--r-pill); background:var(--panel2); border:1px solid var(--line); overflow:hidden;}
+.dv-fill{height:100%; border-radius:var(--r-pill);}
+.dv-fill.good{background:var(--green);}
+.dv-fill.warn{background:var(--amber);}
+.dv-fill.bad{background:var(--red);}
+.dv-pct{font-family:var(--mono); font-size:11.5px; font-weight:700; white-space:nowrap; min-width:40px; text-align:right;}
+.dv-pct.good{color:var(--green);} .dv-pct.warn{color:var(--amber);} .dv-pct.bad{color:var(--red);}
+tr.perf-month-row td{background:var(--panel2) !important; padding:9px 10px; border-bottom:1px solid var(--line); border-top:2px solid var(--line);}
+tr.perf-month-row .pmr-inner{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+tr.perf-month-row .pmr-title{font-weight:800; font-size:12.5px; letter-spacing:0.2px; color:var(--steel); font-family:var(--mono); text-transform:uppercase;}
+tr.perf-month-row .pmr-stat{font-size:11.5px; color:var(--text-dim); white-space:nowrap;}
+tr.perf-month-row .pmr-stat b{color:var(--text); font-weight:700;}
+.perf-legend{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:8px 0 14px; padding:9px 12px; background:var(--panel2); border:1px solid var(--line); border-radius:var(--r-sm); font-size:11.5px; color:var(--text-dim);}
+.perf-legend .lg-item{display:flex; align-items:center; gap:6px; white-space:nowrap;}
+.perf-legend .lg-swatch{width:9px; height:9px; border-radius:3px; flex-shrink:0;}
+.perf-subhead{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:22px 0 4px; padding-bottom:6px; border-bottom:2px solid var(--line);}
+.perf-subhead .psh-badge{font-family:var(--mono); font-size:10px; letter-spacing:0.4px; text-transform:uppercase; padding:3px 10px; border-radius:var(--r-pill); background:color-mix(in srgb, var(--steel) 18%, transparent); color:var(--steel); font-weight:700;}
+.perf-subhead h3{margin:0;}
+table.plan-table td.pt-num{text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums;}
+table.plan-table th.pt-num-h{text-align:right;}
