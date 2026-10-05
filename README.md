@@ -9,6 +9,11 @@ Originally built as one self-contained HTML file. That file is kept unchanged in
 [`original/VIPL-ERP.html`](original/VIPL-ERP.html) for reference; the project below is the
 same application split into a React + Vite codebase.
 
+## Hosting
+
+Deployed on **Vercel** with data in **Supabase** — step-by-step guide in
+[DEPLOYMENT.md](DEPLOYMENT.md). Configuration: copy [`.env.example`](.env.example) to `.env.local`.
+
 ## Getting started
 
 ```bash
@@ -89,6 +94,10 @@ Next good candidates: Machine Master, Maintenance, then the larger modules.
 
 ## Shared database
 
-Data is stored as one JSON row in Supabase (`erp_data` table) so every computer sees the
-same records, with the browser's localStorage as an offline cache. The connection settings
-are at the top of `src/engine/00-config-sync.js`.
+Data is stored as one JSON row in Supabase (`erp_data` table, schema in
+[`supabase/schema.sql`](supabase/schema.sql)) so every computer sees the same records, with the
+browser's localStorage as an offline cache. The connection is set with the
+`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` environment variables (`src/config.js`); without
+them the built-in project in `src/engine/00-config-sync.js` is used.
+
+> ⚠️ `npm run dev` uses the live database unless `.env.local` sets `VITE_SUPABASE_URL=off`.

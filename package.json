@@ -2,7 +2,7 @@
   "name": "vipl-erp",
   "private": true,
   "version": "1.0.0",
-  "description": "VIPL ERP — Visalam Industries Pvt Ltd works management system",
+  "description": "VIPL ERP \u2014 Visalam Industries Pvt Ltd works management system",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,5 +17,8 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.0",
     "vite": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }

@@ -35,15 +35,22 @@ const PENDING_KEY = 'visalam_erp_pending_v1';
       (This app already has its own username/password login screen restricting who can use
       it, so a single shared read/write row behind the anon key is acceptable here — the same
       approach used for VIPL-PAYROLL-ERP.)
-   3. In Supabase → Settings → API, copy the "Project URL" and the "anon public" key and paste
-      them into SUPABASE_URL / SUPABASE_ANON_KEY just below.
+   3. In Supabase → Settings → API, copy the "Project URL" and the "anon public" key and set
+      them as VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (Vercel → Project → Settings →
+      Environment Variables, or .env.local for local development — see DEPLOYMENT.md).
+      src/config.js passes them to this engine as window.__VIPL_CONFIG__.
    4. Redeploy. Every computer that logs in now shares the same live data.
-   If you leave these two values blank, the app automatically falls back to the exact
-   old per-browser localStorage behaviour — nothing breaks before you set this up.
+   If the variables are not set, the built-in project below is used. Setting
+   VITE_SUPABASE_URL=off switches to the old per-browser localStorage-only behaviour
+   (useful for local testing without touching the live data).
 =========================================================================== */
-const SUPABASE_URL = 'https://dkqwtohicclbejkmtzbm.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_2ifBJmvZKWomWQWGOGNbeA_7sM37XWq';   // Supabase → Settings → API → "anon public" key
-const SUPABASE_ROW_ID = 'main'; // single shared row — every computer reads/writes this one record
+const VIPL_CONFIG = window.__VIPL_CONFIG__ || {};
+const SUPABASE_URL = VIPL_CONFIG.supabaseUrl === 'off' ? ''
+  : (VIPL_CONFIG.supabaseUrl || 'https://dkqwtohicclbejkmtzbm.supabase.co').replace(/\/+$/, '');
+const SUPABASE_ANON_KEY = SUPABASE_URL
+  ? (VIPL_CONFIG.supabaseAnonKey || 'sb_publishable_2ifBJmvZKWomWQWGOGNbeA_7sM37XWq')   // Supabase → Settings → API → "anon public" key
+  : '';
+const SUPABASE_ROW_ID = VIPL_CONFIG.supabaseRowId || 'main'; // single shared row — every computer reads/writes this one record
 const supabaseConfigured = () => !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 async function fetchRemoteDB(){
