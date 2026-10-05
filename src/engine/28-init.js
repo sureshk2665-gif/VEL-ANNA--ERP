@@ -26,24 +26,65 @@ async function attemptLogin(){
   btnEl.disabled = true;
   uEl.disabled = true;
   pEl.disabled = true;
-  try{
-    if(supabaseConfigured()){
-      const remote = await fetchRemoteDB();
-      if(remote!==null){
-        DB = mergeDbForSync(remote, DB);
-        try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){}
-        setSyncStatus(true);
-      }else{
-        setSyncStatus(false);
+  let match = null;
+  if(AUTH_MODE){
+    // Supabase Auth checks the password; the ERP user record with the same username decides
+    // what this person may see. The password stored in that record is not used.
+    let authErr = null;
+    try{
+      const res = await window.ViplAuth.signIn(u, p);
+      if(!res.ok) authErr = res.message;
+      else{
+        statusTextEl.textContent = 'Loading data…';
+        const alreadyBooted = !!dataBooted;
+        await bootDataOnce();
+        if(alreadyBooted){
+          // Signing in again in the same tab (after a logout): pull the latest shared data.
+          const remote = await fetchRemoteDB();
+          if(remote!==null){
+            DB = mergeDbForSync(remote, DB);
+            try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){}
+            setSyncStatus(true);
+          } else setSyncStatus(false);
+        }
+        const email = window.ViplAuth.toEmail(u);
+        match = (DB.users||[]).find(x=>x.username && window.ViplAuth.toEmail(x.username)===email) || null;
+        if(!match){
+          authErr = 'Signed in, but there is no ERP user named "'+u+'". Ask the Software Admin to add it in Admin → Users.';
+          await window.ViplAuth.signOut();
+        }
       }
+    } finally {
+      statusEl.style.display = 'none';
+      btnEl.disabled = false;
+      uEl.disabled = false;
+      pEl.disabled = false;
     }
-  } finally {
-    statusEl.style.display = 'none';
-    btnEl.disabled = false;
-    uEl.disabled = false;
-    pEl.disabled = false;
+    if(authErr){
+      errEl.textContent = authErr;
+      errEl.classList.add('show');
+      return;
+    }
+  } else {
+    try{
+      if(supabaseConfigured()){
+        const remote = await fetchRemoteDB();
+        if(remote!==null){
+          DB = mergeDbForSync(remote, DB);
+          try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){}
+          setSyncStatus(true);
+        }else{
+          setSyncStatus(false);
+        }
+      }
+    } finally {
+      statusEl.style.display = 'none';
+      btnEl.disabled = false;
+      uEl.disabled = false;
+      pEl.disabled = false;
+    }
+    match = (DB.users||[]).find(x=>x.username===u && x.password===p);
   }
-  const match = (DB.users||[]).find(x=>x.username===u && x.password===p);
   if(match){
     // Username + Password are correct, but the dashboard is NOT granted yet — a 4-digit
     // passcode/OTP must also be entered correctly first (see attemptOtpVerify() below).
@@ -138,6 +179,9 @@ function attemptLogout(){
     }
   }
   currentLoginLogId = null;
+  // Supabase Auth mode: end the database session too — after the queued save of the LoginLog
+  // row above has gone through, since that save still needs this session.
+  if(AUTH_MODE) saveQueue.then(()=>window.ViplAuth.signOut());
   // Logging out always returns to the Login screen — no remembered session, no automatic
   // sign-back-in. Signing in again requires entering a valid Username and Password, then the
   // correct 4-digit code.
@@ -187,7 +231,13 @@ window.addEventListener('beforeunload', (e)=>{
   }
 });
 
-(async function init(){
+// Loads the data and runs the start-up migrations / default seeding. Runs once: straight
+// away normally, but in Supabase Auth mode only after the first successful sign-in — before
+// that the shared database refuses every request, and running the seeding against an empty
+// local cache would push duplicate default records into the real data on sign-in.
+let dataBooted = null; // Promise once started
+function bootDataOnce(){ if(!dataBooted) dataBooted = bootData(); return dataBooted; }
+async function bootData(){
   await loadDB();
   setSyncStatus(lastSyncOk);
   if(lastSyncOk===false){
@@ -386,6 +436,13 @@ window.addEventListener('beforeunload', (e)=>{
   if(unitSelectEl) unitSelectEl.value = currentUnit;
   checkAutoBackup();
   setInterval(checkAutoBackup, 60*1000);
+}
+(async function init(){
+  if(!AUTH_MODE) await bootDataOnce();
+  else{
+    // Data loads after sign-in; until then show the sign-in screen in the theme this browser last used.
+    try{ const cached = JSON.parse(localStorage.getItem(STORE_KEY)||'null'); applyTheme(cached && cached.settings && cached.settings.theme); }catch(e){ applyTheme(); }
+  }
   // Always start at the Login screen — no auto sign-in, no remembered session. The person must
   // enter a valid Username and Password every time the app is opened or reloaded.
   currentUser = null;

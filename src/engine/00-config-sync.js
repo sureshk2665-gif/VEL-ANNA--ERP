@@ -52,13 +52,27 @@ const SUPABASE_ANON_KEY = SUPABASE_URL
   : '';
 const SUPABASE_ROW_ID = VIPL_CONFIG.supabaseRowId || 'main'; // single shared row — every computer reads/writes this one record
 const supabaseConfigured = () => !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+// Supabase Auth mode (window.ViplAuth, src/auth/supabaseAuth.js): the database only answers
+// signed-in users, so every request carries the user's access token instead of the anon key,
+// and nothing is read or written before sign-in (see bootData() / attemptLogin() in 28-init.js).
+const AUTH_MODE = !!(supabaseConfigured() && window.ViplAuth && window.ViplAuth.enabled);
+async function supabaseHeaders(extra){
+  let bearer = SUPABASE_ANON_KEY;
+  if(AUTH_MODE){
+    bearer = await window.ViplAuth.getAccessToken();
+    if(!bearer) return null; // not signed in — the database would refuse the request anyway
+  }
+  return Object.assign({ apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${bearer}` }, extra||{});
+}
 
 async function fetchRemoteDB(){
   if(!supabaseConfigured()) return null;
   try{
+    const headers = await supabaseHeaders();
+    if(!headers){ console.warn('[VIPL ERP] Supabase PULL skipped — not signed in'); return null; }
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/erp_data?id=eq.${SUPABASE_ROW_ID}&select=data`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+      { headers }
     );
     if(!res.ok){
       // Surface the REAL reason a pull failed (missing table, RLS policy not applied, bad key,
@@ -78,12 +92,11 @@ async function fetchRemoteDB(){
 async function pushRemoteDB(data){
   if(!supabaseConfigured()) return false;
   try{
+    const headers = await supabaseHeaders({ 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates' });
+    if(!headers){ console.warn('[VIPL ERP] Supabase PUSH skipped — not signed in'); return false; }
     const res = await fetch(`${SUPABASE_URL}/rest/v1/erp_data?on_conflict=id`, {
       method:'POST',
-      headers:{
-        apikey: SUPABASE_ANON_KEY, Authorization:`Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type':'application/json', Prefer:'resolution=merge-duplicates'
-      },
+      headers,
       body: JSON.stringify([{ id: SUPABASE_ROW_ID, data, updated_at: new Date().toISOString() }])
     });
     if(!res.ok){

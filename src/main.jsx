@@ -1,4 +1,5 @@
 import './config.js'; // must run before the engine loads
+import './auth/supabaseAuth.js'; // defines window.ViplAuth when Supabase Auth is on
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import './styles/index.css';

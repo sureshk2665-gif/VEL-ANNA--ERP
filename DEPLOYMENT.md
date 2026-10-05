@@ -1,95 +1,115 @@
 # Deploying VIPL ERP — Vercel (website) + Supabase (database)
 
-- **Vercel** hosts the website (the built React app — static files, no server code).
-- **Supabase** stores the data: the whole ERP database is one JSON row (`id = 'main'`) in the
-  `erp_data` table, read and written by the browser through Supabase's REST API.
+- **Vercel** hosts the website (static React build) — production deploys from `main`.
+- **Supabase** stores the data: one JSON row (`id = 'main'`) in the `erp_data` table.
+- **Supabase Auth** checks usernames/passwords. Only signed-in users can read or write data.
+  Which modules each person may use is still set in the ERP: **Admin → Users**.
 
-The code already contains the Supabase project your brother set up
-(`dkqwtohicclbejkmtzbm`), with the live data in it. Choose:
-
-- **A. Keep that Supabase project** (simplest — the existing data is used as-is):
-  skip step 1 and step 2 below, go straight to step 3. No environment variables are needed.
-- **B. Use your own new Supabase project**: do all the steps, including moving the data (step 2).
+ERP project: `https://oupnwllczzezcejcnruc.supabase.co` (separate from the payroll project).
 
 ---
 
-## 1. Supabase — create the project (option B only)
+## 1. Create the database table (once)
 
-1. Sign in at <https://supabase.com> → **New project**. Pick a region close to your users
-   (e.g. *South Asia (Mumbai)*), set a database password, create.
-2. Open **SQL Editor → New query**, paste the contents of [`supabase/schema.sql`](supabase/schema.sql),
-   click **Run**. This creates the `erp_data` table and its access policy.
-3. Open **Project Settings → API** (or **Connect**) and copy:
-   - **Project URL** — `https://<ref>.supabase.co`
-   - **anon / publishable key** — starts with `sb_publishable_…` (or a long `eyJ…` legacy anon key).
-   Never use the `service_role` / secret key in this app.
+Supabase → your ERP project → **SQL Editor → New query** → paste all of
+[`supabase/schema.sql`](supabase/schema.sql) → **Run**. You should see "Success. No rows returned".
 
-## 2. Move the existing data (option B only)
+## 2. Lock down sign-up (once — important)
 
-1. In the **current** app, sign in as **softwareadmin** → **Admin → Data Backup & Restore** →
-   download a backup (JSON file). Keep this file safe.
-2. After step 3 is done, open the **new** site, sign in with the default `softwareadmin` /
-   `softwareadmin` (a new empty database is seeded with the default users), go to
-   **Admin → Data Backup & Restore → Restore from Backup** and choose the file.
-3. Sign out and back in with your usual users, check the data, then change passwords.
+Supabase → **Authentication → Sign In / Providers** (or *Providers → Email*):
 
-## 3. Vercel — deploy the website
+- **Allow new users to sign up** → **OFF**. Otherwise anyone could create a login and read the data.
+- Keep **Email** provider **enabled** and **Confirm email** **ON**.
 
-1. Sign in at <https://vercel.com> with GitHub → **Add New… → Project** → import
-   **`sureshk2665-gif/VEL-ANNA--ERP`** (if it isn't listed, use *Adjust GitHub App Permissions*
-   to give Vercel access to the repository).
-2. Settings are read from [`vercel.json`](vercel.json) — Framework **Vite**, build
-   `npm run build`, output `dist`. Leave them as detected.
-3. **Environment Variables** (option B only — leave empty for option A):
+## 3. Create the logins
 
-   | Name | Value |
-   |---|---|
-   | `VITE_SUPABASE_URL` | your Project URL |
-   | `VITE_SUPABASE_ANON_KEY` | your anon / publishable key |
+Supabase → **Authentication → Users → Add user → Create new user**, one per person:
 
-4. Click **Deploy**. After ~1 minute you get a URL like `https://vel-anna-erp.vercel.app`.
-5. Open it, sign in, check the **Sync** indicator in the header turns green, and add/edit a
-   test record from two different computers to confirm both see the same data.
+| Field | Value |
+|---|---|
+| Email | `<username>@vipl-erp.local` — e.g. `softwareadmin@vipl-erp.local`, `vipl1@vipl-erp.local` |
+| Password | a strong password for that person |
+| Auto Confirm User | ✅ **ticked** |
 
-**Updates:** every push to the production branch (**`main`**) redeploys automatically; other
-branches get their own preview URL. Make sure `main` is the repository's default branch
-(GitHub → Settings → General → Default branch) and the production branch in Vercel
-(Project → Settings → Git → Production Branch).
+People sign in to the ERP with just the **username** part (`vipl1`) and that password.
+Start with **`softwareadmin`** — on the very first sign-in the ERP creates its default user
+list, including `softwareadmin` with full rights.
 
-**Changing environment variables** only takes effect after a redeploy (Deployments → ⋯ → Redeploy),
-because they are built into the site.
+For each Supabase login there must be an ERP user with the **same username** in
+**Admin → Users** (that's where their module rights are set). The password field on that
+ERP screen is no longer used for signing in — passwords live only in Supabase.
 
-**Custom domain (optional):** Vercel → Project → Settings → Domains → add e.g. `erp.yourcompany.com`
-and create the DNS record Vercel shows at your domain provider.
+**Changing a password:** these logins use made-up email addresses, so "send password reset
+email" can't work. Instead delete the user in Authentication → Users and create it again with
+the same email and the new password. Their ERP rights and data are not affected.
 
-## Important: preview deployments and local development use the same database
+**Removing someone:** delete their Supabase login (they can no longer sign in), and remove or
+restrict their ERP user in Admin → Users.
 
-Preview URLs and `npm run dev` on your computer use the **same live data** unless told
-otherwise — testing there changes real records. To keep testing separate:
+## 4. Vercel settings
 
-- Local: create `.env.local` with `VITE_SUPABASE_URL=off` (browser-only storage), or point it
-  at a separate test Supabase project. See [`.env.example`](.env.example).
-- Vercel previews: in Environment Variables, add different values for the **Preview** environment
-  (e.g. a test project, or `VITE_SUPABASE_ROW_ID=test` to use a separate row in the same table).
+Vercel → project **vel-anna-erp** → **Settings → Environment Variables** → add:
 
-## Security — please read
+| Name | Value |
+|---|---|
+| `VITE_SUPABASE_URL` | `https://oupnwllczzezcejcnruc.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_n8_H2eMPhprIAieHI4gEQQ_QMQkWlWB` |
 
-The setup works, but it is **not secure yet**:
+Then **Deployments → ⋯ → Redeploy**. Variables only take effect after a redeploy.
 
-1. The anon key is visible to anyone who opens the site (that's normal for Supabase), and the
-   `erp_data` policy lets the anon key **read and overwrite everything** — so anyone who finds
-   the URL can download or wipe all ERP data without logging in.
-2. User passwords are stored in plain text inside that same data.
-3. The 4-digit login code is shown on screen, so it does not add protection.
+With `VITE_SUPABASE_URL` set, the ERP automatically uses Supabase Auth sign-in.
+Without it, it keeps using the original project in the old open mode.
 
-Until that is fixed, keep the site URL private and take regular backups (Admin → Data Backup).
-The proper fix is to move login to **Supabase Auth** and restrict the `erp_data` policy to
-signed-in users; that is a separate piece of work.
+**Recommended: test first.** Add the two variables for the **Preview** environment only,
+open the preview URL of the working branch (Vercel → Deployments), check everything, then
+add them for **Production** and redeploy.
+
+## 5. Move the existing data
+
+1. On the **current** site, sign in as softwareadmin → **Admin → Data Backup & Restore** →
+   download a backup (JSON). Keep it safe.
+2. On the **new** setup, sign in as `softwareadmin` (the Supabase login from step 3).
+3. **Admin → Data Backup & Restore → Restore from Backup** → choose the file.
+4. Check **Admin → Users**: every username that should sign in needs a Supabase login (step 3).
+
+## 6. Check it works
+
+- Header **Sync** dot turns green after sign-in.
+- Add a test record on one computer, click **Sync** on another — it appears.
+- Signed out, nothing loads; a wrong password is rejected.
+
+---
+
+## Local development
+
+`npm run dev` uses whatever `.env.local` says (see [`.env.example`](.env.example)).
+Use `VITE_SUPABASE_URL=off` to work with browser-only data, or a separate test project —
+don't test against the live data.
+
+## Free plan notes
+
+- A free project **pauses after 7 days without activity** — open Supabase and click *Restore*.
+- 500 MB database; no downloadable automatic backups → download an ERP backup weekly
+  (Admin → Data Backup), or upgrade to Pro (~$25/month) for daily backups.
+
+## Security status
+
+Fixed by this setup: the data is no longer readable or writable with the public key alone, and
+sign-in passwords are checked by Supabase Auth instead of being compared in the browser.
+
+Still to improve (next steps):
+1. All signed-in users can technically read the whole data set (the per-module rights are
+   enforced by the ERP screens, not the database). Moving modules to their own tables will
+   allow database-level rules per unit/role.
+2. The ERP user records still contain the old (unused) passwords — clear them or set them to
+   something meaningless after migrating.
+3. The 4-digit code is shown on screen, so it adds no protection.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| Header shows **Sync error** | Check the two environment variables (no typo, no quotes), confirm `schema.sql` was run, then redeploy. Browser console shows the exact Supabase error. |
-| Data differs between computers | Both must use the same deployment/env values; click **Sync** to pull the latest. |
-| Build fails on Vercel | Node 20.19+ is required (set in `package.json`); check the build log. |
+| "Invalid username or password." | The Supabase login doesn't exist, the password is wrong, or **Auto Confirm User** wasn't ticked. |
+| "Signed in, but there is no ERP user named …" | Add that username in **Admin → Users** (sign in as softwareadmin). |
+| **Sync error** after sign-in | `schema.sql` not run, or env variables wrong — the browser console shows the exact Supabase error. Redeploy after fixing variables. |
+| Sign-in screen still accepts old passwords | `VITE_SUPABASE_URL` isn't set for that environment, or you didn't redeploy. |

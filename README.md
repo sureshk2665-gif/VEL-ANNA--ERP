@@ -40,6 +40,7 @@ src/
     TopHeader.jsx          header: user, brand, nav, unit picker, themes, sync, logout
     Toast.jsx              toast message container
   legacy/loadLegacyEngine.js  loads legacy/engine.js once
+  auth/supabaseAuth.js     Supabase Auth sign-in (window.ViplAuth)
   bridge/                  React ⇄ engine connection (registry of migrated screens, helpers)
   modules/hr/              Human Resources screens (React)
   modules/machines/        Machine Master screens (React)
@@ -102,8 +103,10 @@ Next good candidates: Maintenance, Calibration, then the larger modules.
 
 Data is stored as one JSON row in Supabase (`erp_data` table, schema in
 [`supabase/schema.sql`](supabase/schema.sql)) so every computer sees the same records, with the
-browser's localStorage as an offline cache. The connection is set with the
-`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` environment variables (`src/config.js`); without
-them the built-in project in `src/engine/00-config-sync.js` is used.
+browser's localStorage as an offline cache. Setting `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_PUBLISHABLE_KEY` (`src/config.js`) points the app at a project and turns on
+**Supabase Auth** sign-in (`src/auth/supabaseAuth.js`): only signed-in users can read or write,
+and the engine loads data only after sign-in (`bootData()` in `src/engine/28-init.js`). Without
+those variables the original project is used in its old open mode.
 
 > ⚠️ `npm run dev` uses the live database unless `.env.local` sets `VITE_SUPABASE_URL=off`.

@@ -2,7 +2,7 @@
   "name": "vipl-erp",
   "private": true,
   "version": "1.0.0",
-  "description": "VIPL ERP \u2014 Visalam Industries Pvt Ltd works management system",
+  "description": "VIPL ERP — Visalam Industries Pvt Ltd works management system",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "check:legacy": "node scripts/check-legacy.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
