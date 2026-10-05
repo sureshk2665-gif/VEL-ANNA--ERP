@@ -51,11 +51,10 @@ The code already contains the Supabase project your brother set up
 5. Open it, sign in, check the **Sync** indicator in the header turns green, and add/edit a
    test record from two different computers to confirm both see the same data.
 
-**Updates:** every push to the production branch redeploys automatically; other branches get
-their own preview URL. Vercel uses the repository's default branch as production — currently
-`claude/stoic-hypatia-9j0lw9`, the only branch. It's cleaner to create a `main` branch on
-GitHub, make it the default (GitHub → Settings → General → Default branch), and set it as the
-production branch in Vercel → Project → Settings → Git.
+**Updates:** every push to the production branch (**`main`**) redeploys automatically; other
+branches get their own preview URL. Make sure `main` is the repository's default branch
+(GitHub → Settings → General → Default branch) and the production branch in Vercel
+(Project → Settings → Git → Production Branch).
 
 **Changing environment variables** only takes effect after a redeploy (Deployments → ⋯ → Redeploy),
 because they are built into the site.
