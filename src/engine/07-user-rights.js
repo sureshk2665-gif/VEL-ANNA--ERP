@@ -207,6 +207,7 @@ function render(){
   if(currentPage==='priceRevision'){ currentPage='quotation'; quotationSubTab='priceRevision'; }
   renderNav();
   const main = document.getElementById('main');
+  if(window.ViplReact) window.ViplReact.unmountAll(); // release any React screen before #main is rebuilt
   main.classList.remove('ro-mode');
   main.classList.remove('mod-quotation','mod-purchase');
   if(currentPage==='quotation' || currentPage==='custPO' || currentPage==='prodPlan') main.classList.add('mod-quotation');

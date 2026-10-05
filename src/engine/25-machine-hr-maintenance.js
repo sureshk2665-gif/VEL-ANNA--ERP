@@ -164,127 +164,18 @@ function printMachine(id){
 }
 
 /* ---------------- HUMAN RESOURCES ---------------- */
-// Employee Code, Employee Name, Date of Joining, Designation, and a single Status toggle
-// (Current / Resigned). Current Employees and Resigned Employees are NOT two separate lists in
-// storage — they're just two filtered views of the one DB.employees list, so flipping Status on
-// an employee moves them between the two screens automatically, with nothing else to keep in
-// sync.
+// The Human Resources screens are React components (src/modules/hr). These engine functions
+// stay as thin wrappers so render(), the breadcrumb back-button and any other engine code
+// that calls them keeps working unchanged. State (hrSubTab / editingEmployeeId) and data
+// (DB.employees) still live in the engine, exactly as before.
 function renderHR(main){
   if(!subOK('hr', hrSubTab)) hrSubTab = firstAllowedSub('hr') || hrSubTab;
-  main.innerHTML = `
-    <div class="topbar"><div></div></div>
-    <div class="subtabs" style="margin-top:12px;">
-      ${subOK('hr','current')?`<button class="${hrSubTab==='current'?'active':''}" onclick="setHRSubTab('current')">Current Employees</button>`:''}
-      ${subOK('hr','resigned')?`<button class="${hrSubTab==='resigned'?'active':''}" onclick="setHRSubTab('resigned')">Resigned Employees</button>`:''}
-    </div>
-    <div id="hrSub" style="margin-top:12px;"></div>
-  `;
-  renderHRSub();
+  window.ViplReact.mount('hr', main);
 }
 function setHRSubTab(t){ hrSubTab = t; editingEmployeeId = null; renderHRSub(); }
-function renderHRSub(){
-  const box = document.getElementById('hrSub');
-  if(!box) return;
-  box.innerHTML = hrSubTab==='resigned' ? renderResignedEmployeesHtml() : renderCurrentEmployeesHtml();
-}
-function employeeFormHtml(editing){
-  return `
-    <div class="panel">
-      <h3>${editing?'Edit':'Add'} Employee</h3>
-      <div class="frow g4">
-        <div><label class="fl">Employee Code</label><input id="empCode" placeholder="e.g. VIPL-EMP-101" value="${editing?esc(editing.empCode):''}"></div>
-        <div><label class="fl">Employee Name</label><input id="empName" placeholder="e.g. Ramesh Kumar" value="${editing?esc(editing.empName):''}"></div>
-        <div><label class="fl">Date of Joining</label><input id="empDoj" type="date" value="${editing?esc(editing.doj||''):today()}"></div>
-        <div><label class="fl">Designation</label><input id="empDesig" placeholder="e.g. CNC Operator" value="${editing?esc(editing.designation||''):''}"></div>
-      </div>
-      <div class="frow" style="margin-top:2px; margin-bottom:0;">
-        <label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:11.5px; cursor:pointer;">
-          <input type="checkbox" id="empResigned" ${editing&&editing.status==='Resigned'?'checked':''}>
-          Mark as Resigned <span class="hint" style="position:static; font-size:9.5px;">(unchecked = Current)</span>
-        </label>
-      </div>
-      <button class="btn amber" style="margin-top:10px;" onclick="${editing?'saveEditEmployee()':'addEmployee()'}">💾 ${editing?'Save Changes':'Save Employee'}</button>
-      ${editing?`<button class="btn ghost" onclick="cancelEditEmployee()">Cancel</button>`:''}
-    </div>`;
-}
-function renderCurrentEmployeesHtml(){
-  const list = DB.employees.filter(x=>reportUnitMatch(x.unit) && x.status!=='Resigned');
-  const editing = editingEmployeeId ? DB.employees.find(x=>x.id===editingEmployeeId && x.status!=='Resigned') : null;
-  return `
-    ${employeeFormHtml(editing)}
-    <div class="panel">
-      <h3>Current Employees <span class="hint">${list.length} on roll</span></h3>
-      <div class="grid-box">
-        ${list.slice().reverse().map(e=>`
-          <div class="rec-card">
-            <div class="rc-title">${esc(e.empCode)}</div>
-            <div class="rc-sub">${esc(e.empName)}</div>
-            <span class="pill rc-pill done">Current</span>
-            <div class="rc-row"><span class="k">Designation</span><span class="v">${esc(e.designation)||'—'}</span></div>
-            <div class="rc-row"><span class="k">Date of Joining</span><span class="v">${fmtDate(e.doj)||'—'}</span></div>
-            <div class="rc-actions">
-              <button class="btn small ghost" onclick="editEmployee('${e.id}')">Edit</button>
-              <button class="btn danger" onclick="deleteRow('employees','${e.id}')">Del</button>
-            </div>
-          </div>`).join('') || '<div class="empty">No current employees for this unit yet.</div>'}
-      </div>
-    </div>`;
-}
-function renderResignedEmployeesHtml(){
-  const list = DB.employees.filter(x=>reportUnitMatch(x.unit) && x.status==='Resigned');
-  const editing = editingEmployeeId ? DB.employees.find(x=>x.id===editingEmployeeId && x.status==='Resigned') : null;
-  return `
-    ${editing ? employeeFormHtml(editing) : ''}
-    <div class="panel">
-      <h3>Resigned Employees <span class="hint">${list.length} resigned</span></h3>
-      <div class="grid-box">
-        ${list.slice().reverse().map(e=>`
-          <div class="rec-card">
-            <div class="rc-title">${esc(e.empCode)}</div>
-            <div class="rc-sub">${esc(e.empName)}</div>
-            <span class="pill rc-pill fail">Resigned</span>
-            <div class="rc-row"><span class="k">Designation</span><span class="v">${esc(e.designation)||'—'}</span></div>
-            <div class="rc-row"><span class="k">Date of Joining</span><span class="v">${fmtDate(e.doj)||'—'}</span></div>
-            <div class="rc-actions">
-              <button class="btn small ghost" onclick="editEmployee('${e.id}')">Edit</button>
-              <button class="btn danger" onclick="deleteRow('employees','${e.id}')">Del</button>
-            </div>
-          </div>`).join('') || '<div class="empty">No resigned employees for this unit.</div>'}
-      </div>
-    </div>`;
-}
-function addEmployee(){
-  if(!requireWorkingUnit()) return;
-  const empCode=document.getElementById('empCode').value.trim();
-  const empName=document.getElementById('empName').value.trim();
-  if(!empCode||!empName){ toast('Employee Code and Employee Name required'); return; }
-  DB.employees.push({
-    id:'emp'+Date.now(), unit:currentUnit, empCode, empName,
-    doj:document.getElementById('empDoj').value,
-    designation:document.getElementById('empDesig').value.trim(),
-    status: document.getElementById('empResigned').checked ? 'Resigned' : 'Current'
-  });
-  saveDB(); toast('Employee saved'); render();
-}
+function renderHRSub(){ window.ViplReact.refresh('hr'); }
 function editEmployee(id){ editingEmployeeId = id; renderHRSub(); }
 function cancelEditEmployee(){ editingEmployeeId = null; renderHRSub(); }
-// Saving simply writes whatever the Status checkbox currently says onto the one shared
-// employee record — since Current/Resigned are just filtered views of the same list, ticking
-// "Mark as Resigned" and saving is all it takes to move the employee out of Current Employees
-// and into Resigned Employees (and vice-versa if unticked later).
-function saveEditEmployee(){
-  const e = DB.employees.find(x=>x.id===editingEmployeeId);
-  if(!e) return;
-  const empCode=document.getElementById('empCode').value.trim();
-  const empName=document.getElementById('empName').value.trim();
-  if(!empCode||!empName){ toast('Employee Code and Employee Name required'); return; }
-  e.empCode=empCode; e.empName=empName;
-  e.doj=document.getElementById('empDoj').value;
-  e.designation=document.getElementById('empDesig').value.trim();
-  e.status = document.getElementById('empResigned').checked ? 'Resigned' : 'Current';
-  editingEmployeeId = null;
-  saveDB(); toast('Employee updated'); render();
-}
 
 
 

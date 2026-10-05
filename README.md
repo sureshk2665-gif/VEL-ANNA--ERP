@@ -35,6 +35,8 @@ src/
     TopHeader.jsx          header: user, brand, nav, unit picker, themes, sync, logout
     Toast.jsx              toast message container
   legacy/loadLegacyEngine.js  loads legacy/engine.js once
+  bridge/                  React ⇄ engine connection (registry of migrated screens, helpers)
+  modules/hr/              Human Resources screens (React)
   styles/                  CSS split by area, imported in order from styles/index.css
     01-theme.css           colour tokens + Dark / Light / Corporate / Slate / Forest themes
     02-base.css … 15-modals-misc.css
@@ -46,6 +48,7 @@ src/
     09-quotation.js … 27-admin-users.js   one file per module
     28-init.js             login, logout, startup
     29-dropdown-widget.js  ERP-wide searchable dropdown
+    30-react-bridge.js     window.ViplEngine — what React modules may use
 scripts/                   build helpers (engine joiner, syntax check)
 original/VIPL-ERP.html     the untouched original single-file version
 ```
@@ -64,11 +67,25 @@ are **not** ES modules: the build joins them, in filename order, into one classi
 
 ## Moving modules to React
 
-The app shell is React today; the business modules still come from the engine. A module can
-be migrated on its own: build it as a React component reading from the same `DB` object,
-mount it into `#main` when that module is opened, then delete the matching engine file.
-Good first candidates are small, self-contained screens (HR, Machine Master) before large
-ones (Quotation, Production Planning).
+Migrated so far: **Human Resources** (`src/modules/hr`).
+
+How a migrated module plugs in:
+
+1. The engine still owns the data (`DB`) and module state (e.g. `hrSubTab`,
+   `editingEmployeeId`), so other modules that read them keep working.
+2. `src/engine/30-react-bridge.js` exposes them to React as `window.ViplEngine` (live
+   getters/setters + engine helpers such as `saveDB`, `render`, `toast`, `deleteRow`).
+3. The module's old `renderX(main)` becomes a one-line wrapper that calls
+   `window.ViplReact.mount('<id>', main)`; `src/bridge/registry.jsx` maps the id to the React
+   screen and renders it synchronously, so the engine's post-render steps (unit badge,
+   user-rights lock, Reports and Back buttons) still apply.
+4. Engine functions that other code calls (e.g. `editEmployee`, `cancelEditEmployee`) stay
+   as small wrappers that update engine state and call `window.ViplReact.refresh('<id>')`.
+5. React components use `moduleRights('<id>')` from `src/bridge/engine.js` for the same
+   Add / Edit / Delete locking rules the engine applies.
+6. Saved records must keep exactly the same fields — other modules read them.
+
+Next good candidates: Machine Master, Maintenance, then the larger modules.
 
 ## Shared database
 
