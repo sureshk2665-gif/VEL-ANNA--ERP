@@ -42,6 +42,8 @@ src/
   legacy/loadLegacyEngine.js  loads legacy/engine.js once
   bridge/                  React ⇄ engine connection (registry of migrated screens, helpers)
   modules/hr/              Human Resources screens (React)
+  modules/machines/        Machine Master screens (React)
+  components/RightsButton.jsx  button that applies the user's Add/Edit/Delete/Print rights
   styles/                  CSS split by area, imported in order from styles/index.css
     01-theme.css           colour tokens + Dark / Light / Corporate / Slate / Forest themes
     02-base.css … 15-modals-misc.css
@@ -72,7 +74,7 @@ are **not** ES modules: the build joins them, in filename order, into one classi
 
 ## Moving modules to React
 
-Migrated so far: **Human Resources** (`src/modules/hr`).
+Migrated so far: **Human Resources** (`src/modules/hr`), **Machine Master** (`src/modules/machines`).
 
 How a migrated module plugs in:
 
@@ -90,7 +92,11 @@ How a migrated module plugs in:
    Add / Edit / Delete locking rules the engine applies.
 6. Saved records must keep exactly the same fields — other modules read them.
 
-Next good candidates: Machine Master, Maintenance, then the larger modules.
+Engine `<select>`s are restyled by the ERP-wide dropdown widget (`29-dropdown-widget.js`), which
+moves each select into its own wrapper. In React, never render a `<select>` conditionally on
+its own — keep it always mounted and let the whole form remount instead.
+
+Next good candidates: Maintenance, Calibration, then the larger modules.
 
 ## Shared database
 

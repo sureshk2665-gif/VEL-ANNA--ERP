@@ -2,10 +2,12 @@ import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { notifyModule } from './engine.js';
 import HRModule from '../modules/hr/HRModule.jsx';
+import MachinesModule from '../modules/machines/MachinesModule.jsx';
 
 /** Engine page id → React screen. Add an entry here when a module is migrated. */
 const MODULES = {
   hr: HRModule,
+  machines: MachinesModule,
 };
 
 let mounted = []; // [{ id, root }]

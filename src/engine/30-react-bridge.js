@@ -15,8 +15,14 @@ window.ViplEngine = {
   get editingEmployeeId(){ return editingEmployeeId; },
   set editingEmployeeId(v){ editingEmployeeId = v; },
 
+  // Machine Master module state
+  get editingMachineId(){ return editingMachineId; },
+  set editingMachineId(v){ editingMachineId = v; },
+
   // helpers
   saveDB, render, toast, today, fmtDate, deleteRow,
-  subOK, reportUnitMatch, requireWorkingUnit,
+  subOK, reportUnitMatch, requireWorkingUnit, unitLabel,
   setHRSubTab, editEmployee, cancelEditEmployee,
+  editMachine, cancelEditMachine, printMachine,
+  machineLocationOptionsList, machineLocationDisplayLabel, normalizeUnitLocation, machineUnitForLocation,
 };

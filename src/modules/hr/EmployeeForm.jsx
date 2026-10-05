@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { engine } from '../../bridge/engine.js';
+import RightsButton from '../../components/RightsButton.jsx';
 
 /**
  * Add Employee (editing = null) or Edit Employee form. Saves into DB.employees with exactly
@@ -16,8 +17,7 @@ export default function EmployeeForm({ editing, rights }) {
 
   const locked = !rights.canMutate;
   // Same rules as before: Save Employee needs Add; Save Changes needs Add or Edit; Cancel needs Edit.
-  const denySave = editing ? (rights.canMutate ? null : rights.deny('add')) : rights.deny('add');
-  const denyCancel = rights.deny('edit');
+  const saveNeeds = editing ? (rights.canMutate ? null : 'add') : 'add';
 
   function validated() {
     const code = empCode.trim();
@@ -73,20 +73,20 @@ export default function EmployeeForm({ editing, rights }) {
           Mark as Resigned <span className="hint" style={{ position: 'static', fontSize: 9.5 }}>(unchecked = Current)</span>
         </label>
       </div>
-      <button
+      <RightsButton
+        rights={rights}
+        need={saveNeeds}
         className="btn amber"
         style={{ marginTop: 10 }}
-        disabled={!!denySave}
-        title={denySave || undefined}
         onClick={editing ? saveEditEmployee : addEmployee}
       >
         💾 {editing ? 'Save Changes' : 'Save Employee'}
-      </button>
+      </RightsButton>
       {' '}
       {editing && (
-        <button className="btn ghost" disabled={!!denyCancel} title={denyCancel || undefined} onClick={() => E.cancelEditEmployee()}>
+        <RightsButton rights={rights} need="edit" className="btn ghost" onClick={() => E.cancelEditEmployee()}>
           Cancel
-        </button>
+        </RightsButton>
       )}
     </div>
   );
