@@ -1,4 +1,5 @@
 const preventNav = (e) => e.preventDefault();
+const secureSignIn = (window.__VIPL_CONFIG__ || {}).authMode === 'supabase';
 
 /**
  * Two-step sign-in screen.
@@ -14,6 +15,10 @@ export default function LoginOverlay() {
         <div className="lh">
           <div className="lt1"><span className="v-logo">V</span>VIPL ERP</div>
           <div className="lt2">Visalam Industries Pvt Ltd — Works Management</div>
+          {/* Shows which sign-in is active: Supabase Auth logins vs. the old ERP passwords. */}
+          <div className="lt2" style={{ marginTop: 6, fontFamily: 'var(--mono)', fontSize: 10.5 }}>
+            {secureSignIn ? '🔒 Secure sign-in (Supabase)' : 'Classic sign-in'}
+          </div>
         </div>
 
         <div id="loginStepCreds">
